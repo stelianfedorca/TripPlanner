@@ -71,7 +71,7 @@ import AccountScreen from './AccountScreen'
                 tabBarIcon: ({focused}) => (
 
             <TouchableOpacity
-            onPress={openImagePickerAsync}
+            onPress={() => console.log("!!>>>")}
             >
               <View style={{
                 width: 60,

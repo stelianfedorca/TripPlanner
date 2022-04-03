@@ -1,45 +1,39 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity, Button} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import {auth, db} from '../firebase';
-import { useNavigation } from '@react-navigation/native';
-import { doc, getDoc } from 'firebase/firestore';
-import { getStream } from 'firebase/storage';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { doc, getDoc, getDocs, collection} from 'firebase/firestore';
+import { getDownloadURL, getStream } from 'firebase/storage';
 import { useSelector } from 'react-redux';
-import { selectName, selectEmail } from '../redux/reducers/userReducer';
+import { selectFullname, selectEmail } from '../redux/reducers/userReducer';
 import { selectPlace } from '../redux/reducers/placeReducer';
 import { useDispatch } from 'react-redux';
 import { setPlace } from '../redux/reducers/placeReducer';
 
-export default function AccountScreen({navigation}) {
+import { getStorage, ref } from 'firebase/storage';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import PlansScreen from './TopTabs/PlansScreen';
+import GuidesScreen from './TopTabs/GuidesScreen';
+import TopBar from '../components/TopBar';
+import AccountInfo from '../components/AccountInfo';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { onAuthStateChanged } from 'firebase/auth';
 
-  const name = useSelector(selectName);
+
+export default function AccountScreen({navigation}) {
+  const name = useSelector(selectFullname);
   const email = useSelector(selectEmail);
+
+  const [image, setImage] = useState('');
+  const [imageFromStorage, setImageFromStorage] = useState('');
+
   const p = useSelector(selectPlace);
 
-  console.log("Place: ",p);
-  console.log(email);
+  // firebase storage instance
+  const storage = getStorage();
 
   const dispatch = useDispatch();
-  // const navigation = useNavigation();
 
-  // useEffect(async () => {
-  //   console.log("useffect called from account screen..");
-  //   // get the reference of a single document (user's email)
-  //   const docRef = doc(db,'users',auth.currentUser?.email);
-
-  //   // get the document associated with the reference
-  //   const docSnapshot = await getDoc(docRef);
-
-  //   if(docSnapshot.exists()){
-  //     setFullName(docSnapshot.data().name);
-  //     // console.log("Image url: ", docSnapshot.data().photo);
-  //   }else{
-  //     console.log("No such document!");
-  //   }
-
-  //   // console.log("Image url: ", docSnapshot.data().photo);
-
-  // },[]);
 
   const handleSignOut = () => {
     auth.signOut()
@@ -55,61 +49,58 @@ export default function AccountScreen({navigation}) {
     console.log("Email: " + email);
   }
 
-  const blabla = () => {
-    dispatch(setPlace('Paris!!'));
-  }
-
   const getImage = async () => {
-    const docRef = doc(db,'users',auth.currentUser?.email);
+    const docRef = doc(db,'users',email);
 
     // get the document associated with the reference
     const docSnapshot = await getDoc(docRef);
 
-    setImage(docSnapshot.data().photo);
-    console.log("img: ", image);
+    setImage(docSnapshot.data().image); // image name that will be used to get the image url from storage
+  }; 
+
+  const getUserPlans = async () => {
+    const querySnapshot = await getDocs(collection(db,'users',email,'trip_plans'));
+
+    querySnapshot.docs.map((doc) => {
+      console.log(doc.data().title);
+    })
   }
+
+ 
+  // fetch image from storage and store it in a variable
+  useEffect(() => {
+    if(image === '') return ;
+
+    // storage reference for the specified path
+    const pathReference = ref(storage,`${image}`);
+
+    getDownloadURL(pathReference)
+      .then((url) => {
+          setImageFromStorage({url: url});        
+      });
+
+  },[image]);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, user => {
+      if(user){
+        console.log("uid: ", user.uid, "email: ", user.email, "name: ", user.displayName);
+      }else{
+        console.log("No user sorry");
+      }
+    })
+
+    return () => unsubscribe(); // unsubscribing from the listener when the component is unmounting.
+  },[])
   
+  // View or SafeAreView
   return (
-    <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-      <Text>Email: {email}</Text>
-      <Text>Full Name: {name}</Text>
-
-      {/* <Image 
-      style={[styles.thumbnail, {marginTop:30}]}
-      source={{uri: image}}/> */}
-
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-         style={styles.buttonSignOut}
-         onPress={handleSignOut}
-         >
-          <Text style={styles.buttonSignOutText}>Sign out</Text>
-        </TouchableOpacity> 
-      </View>
-
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-         style={styles.buttonSignOut}
-         onPress={showUserDetails}
-         >
-          <Text style={styles.buttonSignOutText}>Show Details</Text>
-        </TouchableOpacity> 
-      </View>
-
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-         style={styles.buttonSignOut}
-         onPress={blabla}
-         >
-          <Text style={styles.buttonSignOutText}>badasddsas</Text>
-        </TouchableOpacity> 
-      </View>
-
-      {/* <Button title="get image" onPress={getImage}/> */}
-
+    <View style={{flex:1,backgroundColor:'white', borderWidth:3, borderColor:'blue'}}>
+        <AccountInfo/>
+        <TopBar/>
     </View>
   );
- 
+  
 }
 
 const styles = StyleSheet.create({

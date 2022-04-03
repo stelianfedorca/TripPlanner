@@ -21,7 +21,7 @@ import {
 from 'firebase/storage';
 import uuid from 'uuid';
 
-import { setName, setEmail, selectName, selectEmail } from '../redux/reducers/userReducer';
+import { setName, setEmail, selectFullname, selectEmail, setUid } from '../redux/reducers/userReducer';
 import { useDispatch, useSelector } from 'react-redux';
 
 const RegisterScreen = ({navigation}) => {
@@ -31,35 +31,34 @@ const RegisterScreen = ({navigation}) => {
     const [userPhoto, setUserPhoto] = useState('');
     const [image, setImage] = useState(null);
 
-    const [register, setRegister] = useState(false);
+    const [isRegistered, setIsRegistered] = useState(false);
 
     const dispatch = useDispatch();
 
-    const n = useSelector(selectName);
+    const n = useSelector(selectFullname);
     const e = useSelector(selectEmail);
 
     // const navigation = useNavigation();
 
     // root storage reference
     const storage = getStorage();
-
-    // useEffect(() => {
-    //     onAuthStateChanged(auth, user => {
-    //         if(user){
-    //             navigation.replace("Account");
-    //         }else{
-    //             console.log("No user authenticated");
-    //         }
-    //     })
-    // },[]);
+    
+    const navigateTo = (screen) => {
+        navigation.replace(screen);
+    }
+    // onAuthStateChanged(auth, user => {
+    //     if(user && isRegistered === false){
+    //         // User is signed in
+    //         navigateTo('Account');
+    //     }else{
+    //         // User is signed out
+    //     }
+    // })
 
 
     // the header's height
     const headerHeight = useHeaderHeight();
 
-    const navigateTo = (screen) => {
-        navigation.replace(screen);
-    }
 
     const uploadUserPhoto = (file) => {
         console.log("uploading the photo to firebase..");
@@ -203,22 +202,27 @@ const RegisterScreen = ({navigation}) => {
 
     const handleSignUp = async () => {
         try{
-            await createUserWithEmailAndPassword(auth, emailInput, password)
-            .catch(error => console.log(error.message));
-    
-            
-            // Create the user document in firestore
-            const currentUserEmail = emailInput;
-            
-            const docRef = doc(db,'users', currentUserEmail);
-            
-            const data = {
-                name: nameInput,
-                image: image,
-            }
-            setDoc(docRef,data);
-            setRegister(true);
-            
+            const { user } = await createUserWithEmailAndPassword(auth, emailInput, password)
+                    // Create the user document in firestore
+                    const uid = user.uid;
+                    const email = user.email;            
+                    const docRef = doc(db,'users', uid);
+
+                   await updateProfile(user,{
+                       displayName: nameInput
+                   });
+                    
+                    const data = {
+                        email: email,
+                        name: nameInput,
+                        image: image,
+                    }
+                    dispatch(setUid(uid));
+                    dispatch(setName(nameInput));
+                    dispatch(setEmail(emailInput));
+
+                    setDoc(docRef,data);
+                    setIsRegistered(true);
 
             // Add photo to the current user
             // uploadUserPhoto(userPhoto.localUri);
@@ -230,14 +234,11 @@ const RegisterScreen = ({navigation}) => {
     };
 
     useEffect(() => {
-        if(register){
-            console.log("register useEffect() is called...");
-            dispatch(setName(nameInput));
-            dispatch(setEmail(emailInput));
-
-            navigateTo('Account');
+        if(isRegistered){
+            navigateTo('Upload');
         }
-    },[register]);
+    },[isRegistered]);
+
 
 // GOOD TO USE : METHOD 2
 
@@ -303,6 +304,10 @@ const RegisterScreen = ({navigation}) => {
         console.log("n: ",n);
         console.log("e: ",e);
     }
+
+    const displayAllUsers = () => {
+
+    }
   return (
     <KeyboardAvoidingView
     keyboardVerticalOffset={headerHeight}
@@ -367,6 +372,12 @@ const RegisterScreen = ({navigation}) => {
             style={{marginTop:10,flex:1,justifyContent:'flex-start'}}
             onPress={display}
         />
+
+        <TouchableOpacity 
+        onPress={displayAllUsers}
+        style={{justifyContent:'center',alignItems:'center',flex:1,backgroundColor:'red'}}>
+            <Text>Display all the users</Text>
+        </TouchableOpacity>
       <Image 
       style={styles.thumbnail}
       source={{uri: userPhoto.localUri}}    

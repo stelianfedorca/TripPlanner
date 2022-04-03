@@ -1,0 +1,246 @@
+import { StyleSheet, Text, View, Image, ActivityIndicator, TouchableOpacity} from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectEmail, selectImage, selectFullname, setImage, userSignOut, selectImageUrl, selectUid, setImageUrl } from '../redux/reducers/userReducer'
+
+import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+import * as ImagePicker from 'expo-image-picker';
+import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+
+import { Entypo } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { resetAction } from '../redux/store';
+import { auth, db } from '../firebase';
+import { onAuthStateChanged, updateProfile } from 'firebase/auth';
+import { doc, updateDoc } from 'firebase/firestore';
+
+const AccountInfo = () => {
+    const uid = useSelector(selectUid);
+    const name = useSelector(selectFullname);
+    const email = useSelector(selectEmail);
+    const image = useSelector(selectImage); // 101
+    const imageUrl = useSelector(selectImageUrl); 
+    const [isUploadLoading, setIsUploadLoading] = useState(false);
+    const [pickImageResult, setPickImageResult] = useState('');
+    const [fileReference, setFileReference] = useState('');
+    const [downloadedImage, setDownloadedImage] = useState('');
+
+
+    // when the component is mounted for the first time
+    // fetch the image from Firebase Storage
+    // and after that, everytime the component is 
+    // rendered 
+
+    const [imageFromLibrary, setImageFromLibrary] = useState('');
+
+
+    const [myImage, setMyImage] = useState('');
+
+
+    const dispatch = useDispatch();
+    const navigation = useNavigation();
+
+    // const getImageFromFirebaseStorage = () => {
+    //     console.log("getImageFromFirebaseStorage, image: ", image);
+    //     const pathReference = ref(getStorage(),`userphoto/${image}`);
+    //     getDownloadURL(pathReference)
+    //         .then((url) => {
+    //             setMyImage({uri: url});
+    //         });
+    // };
+
+    // useEffect(() => {
+    //     if(image === '') {
+    //         return;
+    //     }
+        
+    //     getImageFromFirebaseStorage();
+    // },[image]);
+
+
+    
+
+    const uploadImageToFirebaseStorage = async () => {
+        const filename = `userphoto/${uid}`;
+
+        const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+    
+            // on load
+            xhr.onload = function () { 
+            resolve(xhr.response);
+        };
+            // on error
+            xhr.onerror = function (e) {
+            console.log(e);
+            reject(new TypeError("Network request failed"));
+        };
+            // on complete
+            xhr.responseType = "blob";
+            xhr.open("GET", pickImageResult.uri, true);
+            xhr.send(null);
+        });
+
+        // a reference that points to this 'userphoto/image_name' location 
+        const fileRef = ref(getStorage(), filename);
+        // upload the 'blob' (the image) in the location refered by 'fileRef'
+        const result = await uploadBytes(fileRef, blob);
+        
+        setFileReference(fileRef);
+        // We're done with the blob, close and release it
+        blob.close();
+    };
+
+    const chooseImage = async () => {
+        const requestResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+        if(requestResult.granted === false){
+            return ;
+        }
+
+        // permission granted
+       let response =  await ImagePicker.launchImageLibraryAsync();
+
+       // if the user cancelled the action
+       if(response === true){
+           return;
+       }
+
+       // if the user NOT cancelled the action
+       setPickImageResult(response);
+    };
+
+    const storeInsideRedux = () => {
+        const id = 101;
+        dispatch(setImage(`${email}_${id}`));
+    }
+
+    useEffect(() => {
+        if(downloadedImage === '') return ;
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if(user){
+                await updateProfile(user,{
+                    photoURL: downloadedImage
+                });
+
+                // update the current user's doc
+                const docRef = doc(db,'users',user.uid);
+                const data = {
+                    image: downloadedImage
+                };
+
+                await updateDoc(docRef,data);
+
+                // update the current user's redux
+                dispatch(setImageUrl(downloadedImage));
+                
+            } else {
+                console.log("The user is not logged in");
+            }
+        });
+
+        
+        return () => unsubscribe();
+    },[downloadedImage]);
+
+    useEffect(() => {
+        if(fileReference === '') return ;
+
+        // download the url from storage
+        getDownloadURL(fileReference)
+            .then((response) => {
+                setDownloadedImage(response);
+            })
+    },[fileReference]);
+
+    useEffect(() => {
+        if(pickImageResult.uri === undefined) return;
+
+        uploadImageToFirebaseStorage();
+    },[pickImageResult])
+
+    // when the user choose an image, upload that image to firebase Storage  
+
+    const handleSignOut = () => {
+        auth.signOut()
+        .then(() => {
+            dispatch(resetAction());
+            navigation.replace("Login");
+        })  
+        .catch(error => alert(error.message));
+      };
+
+   
+
+  return (
+    <View style={styles.container}>
+        {/* <View style={styles.topCircle}></View> */}
+        <View style={{width:130}}>
+            {/* <Image source={require('../assets/profile.jpeg')} style={{width:130,height:130,borderRadius:130/2,}} /> */}
+                    <Image source={{uri: imageUrl}} style={{width:130,height:130,borderRadius:130/2,}} />
+
+            <View style={styles.logOut}>
+                <TouchableOpacity onPress={handleSignOut}>
+                    <AntDesign name="logout" size={24} color="black"/>
+                </TouchableOpacity>
+            </View>
+
+            <View style={{position: 'absolute', right:-2, bottom:1,}}>
+                <TouchableOpacity onPress={chooseImage}>
+                    <MaterialCommunityIcons name="pencil-circle" size={42} color="black"/>
+                </TouchableOpacity>
+            </View>
+        
+        </View>
+
+        <View style={{justifyContent:'center',alignItems:'center',margin:10,}}>
+            <Text style={styles.boldName}>{name}</Text>
+            <Text>{email}</Text>
+        </View>
+    </View>
+  )
+}
+
+export default AccountInfo
+
+const styles = StyleSheet.create({
+    container:{
+        flex:1,
+        backgroundColor:'white',
+        justifyContent:'center',
+        alignItems:'center',
+        // marginTop:10,
+        
+
+        borderWidth:2,
+        borderColor:'red',
+    },
+    boldName:{
+        fontSize:16.5,
+        fontWeight:'700',
+    },
+    topCircle:{
+        width:500,
+        height:200,
+        backgroundColor:'#2E7FE3',
+        borderRadius: 20/2,
+        opacity:0.3,
+
+        position:'absolute',
+        top:-120,
+        right:-100,
+        
+        borderWidth:2,
+        borderColor:'green',
+    },
+
+    logOut:{
+        position:'absolute',
+        top:20,
+        right:-100,
+    }
+})

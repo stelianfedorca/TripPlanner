@@ -11,6 +11,9 @@ import 'react-native-get-random-values'
 import { v4 as uuidv4} from 'uuid';
 import InfoScreen from '../../components/InfoScreen';
 import RBSheet from "react-native-raw-bottom-sheet";
+import HeaderCustom from '../../screens/HeaderCustom';
+import RecommendScreen from '../RecommendScreen';
+import TopBarOverview from '../../components/TopBarOverview';
 
 
 const OverviewScreen = ({navigation}) => {
@@ -18,10 +21,7 @@ const OverviewScreen = ({navigation}) => {
 
     const [attractions, setAttractions] = useState([]);
     const [imageSource, setImageSource] = useState('');
-    const [rating, setRating] = useState('');
-    const [attractionSelected, setAttractionSelected] = useState('');
     
-    const [placeId, setPlaceId] = useState('');
     const [photoReference, setPhotoReference] = useState('');
     
     
@@ -30,6 +30,8 @@ const OverviewScreen = ({navigation}) => {
     
     // using the hook to access the redux store's state. ('place' in our case)
     const place = useSelector(selectPlace);
+
+    // console.log(place);
 
     // the returned object will persist for the full lifetime of component
     const refRBSheet  = useRef();
@@ -50,7 +52,7 @@ const OverviewScreen = ({navigation}) => {
         )
     }
     
-
+    // get attractions based on the city
     const getDataFromPlace = async () => {
         // console.log(data);
         var config = {
@@ -66,7 +68,7 @@ const OverviewScreen = ({navigation}) => {
               for(var i =0 ; i<response.data.results.length; i++){
                   attractions.push(response.data.results[i].name);
               }
-              setLoading(false);
+              
               setAttractions(attractions);
           })
           .catch(function (error) {
@@ -74,102 +76,96 @@ const OverviewScreen = ({navigation}) => {
           });
     };
 
-    const callFindPlaceApiByCity = () => {
+    // get photo_reference from Find Places API
+    const callFindPlaceApiByCity = async () => {
         var config = {
             method: 'get',
-            url: `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${attractionSelected}&inputtype=textquery&fields=place_id%2Cformatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry%2Cphotos&key=${apiKey}`,
+            url: `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${place}&inputtype=textquery&fields=place_id%2Cformatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry%2Cphotos&key=${apiKey}`,
             headers: { }
           };
           
             axios(config)
             .then(function (response) {
-            setRating(response.data.candidates[0].rating);
             setPhotoReference(response.data.candidates[0].photos[0].photo_reference);
-            setPlaceId(response.data.candidates[0].place_id);
-
-            console.log("The rating is: " + rating);
-            console.log("The photo reference is: " + photoReference);
-            console.log("The place id is: " + placeId);
-
         })
           .catch(function (error) {
-            console.log(error);
+            console.log("The error is: ", error);
           });
     };
 
-    const getPhoto = () => {
-
+    const getPhoto = async () => {
+      
         var config = {
-            method: 'get',
-            url: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${photoReference}&key=${apiKey}`,
-            headers: { }
-          };
-
-          var axios = require('axios');
-
-          axios(config)
-          .then(function (response) {
-            setImageSource({url: response.request.responseURL});
-          })
-          .catch(function (error) {
+          method: 'get',
+          url: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=${photoReference}&key=${apiKey}`,
+          headers: { }
+        };
+  
+        var axios = require('axios');
+  
+        axios(config)
+        .then(function (response) {
+          // setLoadingAfterTimeOut();
+          setImageSource({url: response.request.responseURL});
+        })
+        .catch(function (error) {
           console.log(error);
-          });
-   
+        });
+        
     };
 
     useEffect(() => {
-         getDataFromPlace();
+        //  getDataFromPlace();
+         callFindPlaceApiByCity();
     },[place]);
 
     // useEffect(() => {
-    //     if(attractions === '') return ;
+    //     if(attractions.length === 0) return;
 
     //     setLoading(false);
     // },[attractions]);
 
-    
-    // called everytime a new element is selected from the list
-    // useEffect(() => {
-    //     if(attractionSelected === '') return ;
+    useEffect(() => {
+        if(photoReference === '') return;
+        getPhoto();
+    },[photoReference]);
 
-        
-    //     callFindPlaceApiByCity();
-    // },[attractionSelected]);
+    useEffect(() => {
+        if(imageSource.url === undefined) return;
+        setLoading(false);
+    },[imageSource]);
 
-    // // called everytime the photo_reference has been setted
-    // useEffect(() => {
-    //     if(photoReference === ''){
-    //         return;
-    //     }
-    //     getPhoto();
-    // },[photoReference]);
-    
-
-    
-
+   
   return (
-    <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+    <View style={styles.container}>
     {loading ? (
         <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
           <ActivityIndicator size="large" color="#000" />
           </View>
-    ):(
-        <View style={{marginTop:100,}}>
-            <FlatList
-                data={attractions}
-                renderItem={renderItem}
-                keyExtractor={(index) => index.toString()}
-            />
+    ):( 
+        <View style={{flex:1}}>
+            <HeaderCustom image={imageSource.url} />
+            <TopBarOverview/>
         </View>
+
     )}
 
     </View>
   )
 }
 
+
 export default OverviewScreen
 
 const styles = StyleSheet.create({
+    container:{
+        flex:1,
+        flexDirection:'column',
+        // justifyContent:'center', 
+        // alignItems:'center', 
+        backgroundColor:'white',
+    },
+
     item:{
         padding:20,
         marginVertical:6,
@@ -184,5 +180,13 @@ const styles = StyleSheet.create({
         width:300,
         height:300,
         resizeMode:'contain',
-    }
+    },
+    cityImage: {
+        width:'100%',
+        height:200,
+        // resizeMode:'contain',
+        // resizeMode:'cover',
+        // resizeMode:'stretch',
+        resizeMode:'center',
+    },
 })

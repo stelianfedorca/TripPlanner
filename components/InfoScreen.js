@@ -28,7 +28,8 @@ const InfoScreen = ({route,navigation}) => {
     }, 400);
   }
 
-  const callFindPlaceApiByCity = () => {
+  // get info from place api using an tourist attraction
+  const callFindPlaceApiByAttractionSelected = () => {
 
     axios.get(
       `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${attractionSelected}&inputtype=textquery&fields=place_id%2Cformatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry%2Cphotos&key=${apiKey}`
@@ -45,28 +46,28 @@ const InfoScreen = ({route,navigation}) => {
     .catch(function (error) {
       console.log(error);
   });
-    // var config = {
-    //     method: 'get',
-    //     url: `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${attractionSelected}&inputtype=textquery&fields=place_id%2Cformatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry%2Cphotos&key=${apiKey}`,
-    //     headers: { }
-    //   };
+};
+// var config = {
+//     method: 'get',
+//     url: `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${attractionSelected}&inputtype=textquery&fields=place_id%2Cformatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry%2Cphotos&key=${apiKey}`,
+//     headers: { }
+//   };
+  
+//     axios(config)
+//     .then(function (response) {
+//       console.log(response.data);
+//       setRating(response.data.candidates[0].rating);
+//       setPhotoReference(response.data.candidates[0].photos[0].photo_reference);
+//       setPlaceId(response.data.candidates[0].place_id);
       
-    //     axios(config)
-    //     .then(function (response) {
-    //       console.log(response.data);
-    //       setRating(response.data.candidates[0].rating);
-    //       setPhotoReference(response.data.candidates[0].photos[0].photo_reference);
-    //       setPlaceId(response.data.candidates[0].place_id);
-          
-    //       console.log("The rating is: " + rating);
-    //       console.log("The photo reference is: " + photoReference);
-    //       console.log("The place id is: " + placeId);
-          
-    //     })
-    //     .catch(function (error) {
-    //       console.log(error);
-    //   });
-    };
+//       console.log("The rating is: " + rating);
+//       console.log("The photo reference is: " + photoReference);
+//       console.log("The place id is: " + placeId);
+      
+//     })
+//     .catch(function (error) {
+//       console.log(error);
+//   });
     
     const getPhoto = () => {
       
@@ -80,7 +81,7 @@ const InfoScreen = ({route,navigation}) => {
 
       axios(config)
       .then(function (response) {
-        setLoadingAfterTimeOut();
+        // setLoadingAfterTimeOut();
         setImageSource({url: response.request.responseURL});
       })
       .catch(function (error) {
@@ -89,9 +90,11 @@ const InfoScreen = ({route,navigation}) => {
       
   };
 
+ 
+
   useEffect(() => {
     if(attractionSelected === '') return ;
-    callFindPlaceApiByCity();
+    callFindPlaceApiByAttractionSelected();
   },[attractionSelected]);
 
   
@@ -102,6 +105,12 @@ const InfoScreen = ({route,navigation}) => {
     
   },[photoReference]);
 
+  useEffect(() => {
+    if(imageSource.url === undefined) return ;
+
+    setLoading(false);
+  },[imageSource])
+
 
   return (
         <View style={styles.container}>
@@ -110,12 +119,13 @@ const InfoScreen = ({route,navigation}) => {
           <ActivityIndicator size="large" color="#000" />
           </View>
         ): (
-          <>
-            <Image source={{uri: imageSource.url}} style={styles.thumbnail}/>
+          <View style={{flex:1,}}>
+            {/* <HeaderCustom/> */}
+            {/* <Image source={{uri: imageSource.url}} style={styles.thumbnail}/>
             <Text style={styles.text} >Title: {attractionSelected}</Text>
             <Text style={styles.text} >Rating: {rating}</Text>
-            <Text>Hello world</Text>
-          </>
+            <Text>Hello world</Text> */}
+          </View>
         )}
         </View>
 

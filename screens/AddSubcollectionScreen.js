@@ -5,7 +5,7 @@ import sizeof from 'firestore-size';
 import {doc, getDoc, updateDoc, collection, setDoc} from 'firebase/firestore';
 import {auth, db} from '../firebase';
 import {useSelector} from 'react-redux';
-import { selectName, selectEmail } from '../redux/reducers/userReducer';
+import { selectFullname, selectEmail } from '../redux/reducers/userReducer';
 import { selectPlace } from '../redux/reducers/placeReducer';
 
 // fsd20@gmail.com

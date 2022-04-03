@@ -3,13 +3,17 @@ import React, { useEffect, useState } from 'react';
 import {useHeaderHeight} from '@react-navigation/elements';
 import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
-import {auth} from '../firebase';
+import {auth, db} from '../firebase';
 import { useDispatch } from 'react-redux';
+import { setEmail, setName, setUid } from '../redux/reducers/userReducer';
+import { collection, doc, getDoc } from 'firebase/firestore';
 
 const LoginScreen = ({navigation}) => {
     // react hooks
-    const [email, setEmail] = useState('');
+    const [emailInput, setEmailInput] = useState('');
     const [password, setPassword] = useState('');
+
+    const [isSignedIn, setIsSignedIn] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -32,24 +36,48 @@ const LoginScreen = ({navigation}) => {
 
    // const auth = getAuth();
 
-    // implementation for handling the sign-up
-    // const handleSignUp = () => {
-    //     createUserWithEmailAndPassword(auth,email,password)
-    //     .then(userCredentials => {
-    //         const user = userCredentials.user;
-    //         console.log("Registered in with: ", user.email);
-    //     })
-    //     .catch(error => alert(error.message))
-    // }
+    
 
-    const handleLoginIn = () => {
-        signInWithEmailAndPassword(auth,email,password)
-        .then(userCredentials => {
-            const user = userCredentials.user;
-            console.log("Logged in with: ", user.email);
+    const handleSignIn = () => {
+        signInWithEmailAndPassword(auth,emailInput,password)
+        .then((result) => {
+            const uid = result.user.uid;
+            const email = result.user.email;
+            console.log("uid: ", uid, "email: ",email);
+            // console.log("Logged in with: ", user.userEmail);
+            // setIsSignedIn(true);
+            
         })
         .catch(error => alert(error.message))
-    }
+    };
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth,user => {
+            if(user){
+                const uid = user.uid;
+                const email = user.email;
+                const name = user.displayName;
+
+                dispatch(setUid(uid));
+                dispatch(setEmail(email));
+                dispatch(setName(name));  
+
+            } else {
+                console.log("The user is not logged in");
+            }   
+
+            return () => unsubscribe(); // unsubscribing from the listener when the component is unmounting.
+        })
+    },[]);
+
+    // useEffect(() => {
+    //     if(isSignedIn === false) return;
+
+    //     // if the user is signed in
+    //     // set user's info 
+    //     dispatch(setEmail(emailInput));
+
+    // },[isSignedIn]);
 
 
     const headerHeight = useHeaderHeight();
@@ -62,34 +90,34 @@ const LoginScreen = ({navigation}) => {
     >
     {/* Top circle for UI design */}
     <View style={styles.circleTopRight}></View>
-
+    {/* <View style={{borderWidth:2, borderColor:'red', width:'100%', justifyContent:'center',alignItems:'flex-start', padding:20,}}>
+        <Text style={{fontSize:32}}>Log In</Text>
+    </View> */}
 
       <View style={styles.inputContainer}>
-
-
-      <TextInput
-      placeholder='Email'
-      value={email}
-      onChangeText={text => setEmail(text)}
-      style={styles.input}
-      />
-      
-      <TextInput
-      placeholder='Password'
-      value={password}
-      onChangeText={text => setPassword(text)}
-      style={styles.input}
-      secureTextEntry
-      />
+        <TextInput
+        placeholder='Email'
+        value={emailInput}
+        onChangeText={text => setEmailInput(text)}
+        style={styles.input}
+        />
+        
+        <TextInput
+        placeholder='Password'
+        value={password}
+        onChangeText={text => setPassword(text)}
+        style={styles.input}
+        secureTextEntry
+        />
       </View>
 
       {/**View-ul ce contine butonul de login*/}
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-        onPress={handleLoginIn}
+        onPress={handleSignIn}
         style={styles.button}
         >
-        <Text style={styles.buttonLogin}>Login</Text>
+        <Text style={styles.buttonLogin}>Sign in</Text>
         </TouchableOpacity>
 
         {/* <TouchableOpacity
@@ -142,6 +170,8 @@ const styles = StyleSheet.create({
         paddingVertical:10,
         borderRadius:10,
         marginTop:5,
+
+        elevation:1,
     },
     inputContainer:{
         width:'80%' // acest view sa fie 80% din lungimea parintelui View

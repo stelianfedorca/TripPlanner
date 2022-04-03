@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const ItineraryScreen = () => {
+const BottomSheetCustom = () => {
   return (
     <View>
-      <Text>ItineraryScreen</Text>
+      <Text>BottomSheetCustom</Text>
     </View>
   )
 }
 
-export default ItineraryScreen
+export default BottomSheetCustom
 
 const styles = StyleSheet.create({})
