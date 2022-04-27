@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { persistReducer } from "redux-persist";
 import tripReducer from "./reducers/tripReducer";
 import searchReducer from "./reducers/searchReducer";
+import authReducer from "./reducers/authReducer";
 
 
 const persistConfig = {
@@ -16,6 +17,7 @@ const persistConfig = {
 
     const rootReducer = combineReducers({
         place: placeReducer.reducer,
+        auth: authReducer.reducer,
         user: userReducer.reducer,
         newTrip: tripReducer.reducer,
         search: searchReducer.reducer,

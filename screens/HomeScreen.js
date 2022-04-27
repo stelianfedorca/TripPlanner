@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Button, Pressable, TouchableOpacity, FlatList} from 'react-native';
+import { StyleSheet, Text, View, Button, Pressable, TouchableOpacity, FlatList, SafeAreaView, Image} from 'react-native';
 import React, { useState } from 'react';
 import { auth, db } from '../firebase';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
@@ -40,55 +40,46 @@ const HomeScreen = ({navigation}) => {
     const DATA = [
         {
           id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-          title: 'Vasi',
+          title: 'London',
+          image: '../assets/london-app.jpg'
         },
         {
           id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-          title: 'Laur',
+          title: 'Vienna',
+          image: '../assets/vienna-app.jpg'
         },
         {
           id: '58694a0f-3da1-471f-bd96-145571e29d72',
-          title: 'Rares',
+          title: 'Madrid',
+          image: '../assets/madrid-app.jpg'
         },
       ];
 
-    const Item = ({ title }) => (
-        <View style={styles.item}>
-            <Text style={styles.title}>{ title }</Text>
-        </View>
-    )
+    const Item = ({ item }) => {
+        const {title, image} = item;
+        return (
+          <View style={styles.item}>
+            <Image source={require("../assets/madrid-app.jpg")} style={{width:200, height:200, resizeMode:'contain'}}/>
+              <Text style={styles.title}>{ title }</Text>
+          </View>
+        ); 
+    }
+    
 
     const _renderItem = ({item}) => (
-        <Item title={item.title} /> 
+        <Item item={item}/> 
     );
 
  
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
         <FlatList
-            data={users}
+            data={DATA}
             renderItem={_renderItem}
             keyExtractor={(item) => item.id}
         />
-    
-    
-    
-    
-    {/* <TouchableOpacity
-    style={styles.button}
-    onPress={handleSignOut}
-    >
-    <Text style={styles.buttonText}>Sign Out</Text>
-    </TouchableOpacity> */}
 
-    {/* <TouchableOpacity
-    style={[styles.button, {backgroundColor:'green'}]}
-    onPress={changeVariable}
-    >
-    <Text style={styles.buttonText}>Change variable in Redux</Text>
-    </TouchableOpacity> */}
-
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -97,8 +88,6 @@ export default HomeScreen;
 const styles = StyleSheet.create({
     container:{
         flex:1,
-        justifyContent:'center',
-        alignItems:'center',
         backgroundColor:'white',
     },
     button:{
@@ -118,9 +107,10 @@ const styles = StyleSheet.create({
     },
     item: {
     backgroundColor: '#f9c2ff',
-    padding: 20,
+    padding: 40,
     marginVertical: 8,
-    marginHorizontal: 16,
+    marginHorizontal:16,
+    // height:150,
   },
   title: {
     fontSize: 32,

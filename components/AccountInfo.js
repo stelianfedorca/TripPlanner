@@ -17,6 +17,7 @@ import { resetAction } from '../redux/store';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged, updateProfile } from 'firebase/auth';
 import { doc, updateDoc } from 'firebase/firestore';
+import { setIsSignedIn } from '../redux/reducers/authReducer';
 
 const AccountInfo = () => {
     const uid = useSelector(selectUid);
@@ -28,6 +29,7 @@ const AccountInfo = () => {
     const [pickImageResult, setPickImageResult] = useState('');
     const [fileReference, setFileReference] = useState('');
     const [downloadedImage, setDownloadedImage] = useState('');
+
 
 
     // when the component is mounted for the first time
@@ -114,11 +116,6 @@ const AccountInfo = () => {
        setPickImageResult(response);
     };
 
-    const storeInsideRedux = () => {
-        const id = 101;
-        dispatch(setImage(`${email}_${id}`));
-    }
-
     useEffect(() => {
         if(downloadedImage === '') return ;
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -169,7 +166,8 @@ const AccountInfo = () => {
         auth.signOut()
         .then(() => {
             dispatch(resetAction());
-            navigation.replace("Login");
+            dispatch(setIsSignedIn(false));
+            // navigation.replace("Login");
         })  
         .catch(error => alert(error.message));
       };
@@ -180,8 +178,13 @@ const AccountInfo = () => {
     <View style={styles.container}>
         {/* <View style={styles.topCircle}></View> */}
         <View style={{width:130}}>
-            {/* <Image source={require('../assets/profile.jpeg')} style={{width:130,height:130,borderRadius:130/2,}} /> */}
-                    <Image source={{uri: imageUrl}} style={{width:130,height:130,borderRadius:130/2,}} />
+            {
+                imageUrl ? (
+                    <Image source={{uri: imageUrl}} style={{width:130,height:130,borderRadius:130/2}} />
+                ): (
+                    <Image source={require('../assets/icon.png')} style={{width:130,height:130,borderRadius:130/2}} />
+                )
+            }
 
             <View style={styles.logOut}>
                 <TouchableOpacity onPress={handleSignOut}>
@@ -216,8 +219,7 @@ const styles = StyleSheet.create({
         // marginTop:10,
         
 
-        borderWidth:2,
-        borderColor:'red',
+       
     },
     boldName:{
         fontSize:16.5,

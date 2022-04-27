@@ -10,7 +10,7 @@ import {v4 as uuidv4} from 'uuid';
 import SkeletonContent from 'react-native-skeleton-content';
 
 
-    const RecommendScreen = ({navigation}) => {
+const RecommendScreen = ({navigation}) => {
     const [attractions, setAttractions] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isBottomSheetLoading, setIsBottomSheetLoading] = useState(true);
@@ -28,14 +28,6 @@ import SkeletonContent from 'react-native-skeleton-content';
 
     // the returned object will persist for the full lifetime of component
     const bottomSheet = useRef();
-
-
-    // const navigateTo = (screen,title) => {
-    //     navigation.navigate(screen,{
-    //         attractionSelected: title,
-    //     });
-
-    // };
 
     const getAttractionDetails = async (title) => {
         var axios = require('axios');
@@ -97,8 +89,6 @@ import SkeletonContent from 'react-native-skeleton-content';
         getAttractionDetails(title);
     }
 
-    
-
 
     const Item = ({title, photoReference}) => {
             const [image, setImage] = useState('');
@@ -126,7 +116,6 @@ import SkeletonContent from 'react-native-skeleton-content';
             };
 
             useEffect(() => {
-                console.log("item");
                 getPhoto();
             },[]);
     
@@ -187,14 +176,12 @@ import SkeletonContent from 'react-native-skeleton-content';
    
         useEffect(() => {
             if(attractions.length === 0) {
-                console.log("attractions array is empty: ", attractions);
                 return ;
             }
             setIsLoading(false);
         },[attractions]);
 
         useEffect(() => {
-            console.log("hei");
             getDataFromPlace();
         },[]);
 

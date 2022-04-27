@@ -13,25 +13,30 @@ import { AntDesign } from '@expo/vector-icons';
 import { StackActions } from '@react-navigation/native';
 import { CommonActions } from '@react-navigation/native';
 const GooglePlacesInput = ({navigation}) => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [photoReference, setPhotoReference] = useState('');
+    const [isNewTrip, setIsNewTrip] = useState(false);
+
     const dispatch = useDispatch();
 
     const place = useSelector(selectPlace); 
     const uid = useSelector(selectUid);
     const isNewTripAdded = useSelector(selectIsNewTripAdded);
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [isSearchScreen, setIsSearchScreen] = useState(false);
 
     const placeSearched = useSelector(selectPlaceSearched);
-    console.log("PlaceSearched: ", placeSearched);
+
+    
+    const apiKey = 'AIzaSyBK5lXWrezjxCJnfSmVfukDVzivZbcNFT4';
+
+
 
     const addTripToUser = async () => {
-      // setIsLoading(true);
-
       const tripData = {
         place: `${place}`,
         title: `Trip to ${place}`,
         image: `${place}_image`,
+        imageReference: `${photoReference}`,
       };
 
       // get the reference to subcollection
@@ -39,22 +44,34 @@ const GooglePlacesInput = ({navigation}) => {
       const subCollRef = collection(db,`users/${uid}/trip_plans`);
 
       // add the doc inside the subcollection
-      await addDoc(subCollRef, tripData);
+      addDoc(subCollRef, tripData);
+    };
 
-      dispatch(setIsNewTripAdded(true));
-    }
+    const callFindPlaceApiByCity = async () => {
+      var config = {
+          method: 'get',
+          url: `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${place}&inputtype=textquery&fields=place_id%2Cformatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry%2Cphotos&key=${apiKey}`,
+          headers: { }
+        };
+        
+          axios(config)
+          .then(function (response) {
+          setPhotoReference(response.data.candidates[0].photos[0].photo_reference);
+      })
+        .catch(function (error) {
+          console.log("The error is: ", error);
+        });
+  };
+
+  const generatePlan2 = async () => {
+    dispatch(setPlace(placeSearched));
+}
+
 
     const generatePlan = async () => {
-      // add the Trip Plan to user subcollection
-        await addTripToUser();
+        dispatch(setPlace(placeSearched));
     }
 
-    // In this function I set the place into store using Redux
-    const setData = (data) => {
-        const place = data.terms[0].value;
-        dispatch(setPlace(place));
-        setIsSearchScreen(false);
-    };
 
     const goBack = () => {
       dispatch(setPlaceSearched(''));
@@ -62,14 +79,33 @@ const GooglePlacesInput = ({navigation}) => {
     }
 
     useEffect(() => {
-      if(isNewTripAdded === true) {
+      if(isNewTrip === true) {
+          dispatch(setPlaceSearched(''));
           navigation.replace('Overview');
+          setIsNewTrip(false);
       }
-    },[isNewTripAdded]);
+    },[isNewTrip]);
+
+    useEffect(() => {
+      if(place === placeSearched){
+        callFindPlaceApiByCity();
+      } else {
+        return ;
+      }
+    },[place]);
+
+    useEffect(() => {
+      if(photoReference === '') {
+        return ;
+      }else {
+        addTripToUser();
+        dispatch(setIsNewTripAdded(true));
+        setIsNewTrip(true);
+      }
+    },[photoReference]);
 
     const displaySearchScreen = () => {
       navigation.navigate('Search');
-      // setIsSearchScreen(true);
     }
 
   
@@ -82,18 +118,12 @@ const GooglePlacesInput = ({navigation}) => {
               <ActivityIndicator size="large" color="#000" />
             </View>
         ): (
-          isSearchScreen ? (
-            <>
-              
-            </>
-            
-
-          ): (
+          
             <>
                 <View style={styles.firstHalf}>
                   <View style={styles.header}>
                       <Text style={{fontWeight:'bold', fontSize:28,}}>Plan a new trip</Text>
-                      <Text style={{fontSize:22, textAlign:'center'}}>
+                      <Text style={{fontSize:22, textAlign:'center', color:'#9C9A9A'}}>
                         Build an itinerary and map out your upcoming travel plans
                       </Text>
                   </View>
@@ -109,16 +139,13 @@ const GooglePlacesInput = ({navigation}) => {
               <View style={styles.submitButtonContainer}>
                 <TouchableOpacity
                     style={styles.submitButton}
-                    onPress={generatePlan}
+                    onPress={generatePlan2}
                     >
                     <Text style={styles.submitText}>Start planning</Text>
                 </TouchableOpacity>
               </View>
             </>
-          )
-
-
-        )
+          )    
       }
         
       </View>

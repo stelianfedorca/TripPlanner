@@ -7,47 +7,22 @@ import {auth, db} from '../firebase';
 import { useDispatch } from 'react-redux';
 import { setEmail, setName, setUid } from '../redux/reducers/userReducer';
 import { collection, doc, getDoc } from 'firebase/firestore';
+import { setIsSignedIn } from '../redux/reducers/authReducer';
 
 const LoginScreen = ({navigation}) => {
     // react hooks
     const [emailInput, setEmailInput] = useState('');
     const [password, setPassword] = useState('');
 
-    const [isSignedIn, setIsSignedIn] = useState(false);
-
     const dispatch = useDispatch();
 
-    // const navigation = useNavigation();
-
-    // // called when the component is mounted
-    // useEffect(() => {
-    //     onAuthStateChanged(auth,user => {
-    //         // if(user){
-    //         //     navigation.replace("Upload");
-    //         // }
-                
-    //     })
-    // },[]);
 
     const navigateToRegisterScreen = () => {
         navigation.replace("Register");
-    }
-
-
-   // const auth = getAuth();
-
-    
+    };
 
     const handleSignIn = () => {
         signInWithEmailAndPassword(auth,emailInput,password)
-        .then((result) => {
-            const uid = result.user.uid;
-            const email = result.user.email;
-            console.log("uid: ", uid, "email: ",email);
-            // console.log("Logged in with: ", user.userEmail);
-            // setIsSignedIn(true);
-            
-        })
         .catch(error => alert(error.message))
     };
 
@@ -60,24 +35,18 @@ const LoginScreen = ({navigation}) => {
 
                 dispatch(setUid(uid));
                 dispatch(setEmail(email));
-                dispatch(setName(name));  
+                dispatch(setName(name));
+                
+                dispatch(setIsSignedIn(true));
 
             } else {
                 console.log("The user is not logged in");
             }   
 
             return () => unsubscribe(); // unsubscribing from the listener when the component is unmounting.
-        })
+        });
+
     },[]);
-
-    // useEffect(() => {
-    //     if(isSignedIn === false) return;
-
-    //     // if the user is signed in
-    //     // set user's info 
-    //     dispatch(setEmail(emailInput));
-
-    // },[isSignedIn]);
 
 
     const headerHeight = useHeaderHeight();
@@ -86,7 +55,7 @@ const LoginScreen = ({navigation}) => {
     <KeyboardAvoidingView
     keyboardVerticalOffset={headerHeight}
     style={styles.container}
-    behavior={Platform.IOS === 'ios' ? "padding" : "height"}
+    behavior={Platform.IOS === 'ios' ? "padding" : null}
     >
     {/* Top circle for UI design */}
     <View style={styles.circleTopRight}></View>
@@ -160,6 +129,7 @@ const styles = StyleSheet.create({
         alignItems:'center',
         flex:1,
         backgroundColor:'white',
+        overflow:'hidden',
     },
     secondContainer:{
         margin:20,

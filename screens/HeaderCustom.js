@@ -16,7 +16,7 @@ const HeaderCustom = ({image}) => {
 
   const navigateToHomeScreen = () => {
     dispatch(setIsNewTripAdded(false));
-    navigation.replace('Home2');
+    navigation.goBack();
   }
 
   return (

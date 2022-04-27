@@ -14,6 +14,9 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import HeaderCustom from '../../screens/HeaderCustom';
 import RecommendScreen from '../RecommendScreen';
 import TopBarOverview from '../../components/TopBarOverview';
+import { getDownloadURL, getStorage, ref, uploadBytesResumable, uploadString } from 'firebase/storage';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../../firebase';
 
 
 const OverviewScreen = ({navigation}) => {
@@ -31,17 +34,16 @@ const OverviewScreen = ({navigation}) => {
     // using the hook to access the redux store's state. ('place' in our case)
     const place = useSelector(selectPlace);
 
-    // console.log(place);
+    const navigateToInfo = () => {
+        navigation.navigate('Info',{
+            attractionSelected: title,
+        });
+    }
 
     // the returned object will persist for the full lifetime of component
     const refRBSheet  = useRef();
     const Item = ({title}) => (
-            <TouchableOpacity style={styles.item} onPress={() => {
-                // setAttractionSelected(title); 
-                navigation.navigate('Info',{
-                    attractionSelected: title,
-                });
-                }}>
+            <TouchableOpacity style={styles.item} onPress={navigateToInfo}>
                 <Text style={styles.title}>{title}</Text>
             </TouchableOpacity>
         );
@@ -105,7 +107,6 @@ const OverviewScreen = ({navigation}) => {
   
         axios(config)
         .then(function (response) {
-          // setLoadingAfterTimeOut();
           setImageSource({url: response.request.responseURL});
         })
         .catch(function (error) {
@@ -114,26 +115,120 @@ const OverviewScreen = ({navigation}) => {
         
     };
 
+    // function for uploading the image to Storage
+    const uploadFile = async () => {
+        // root reference to the storage
+        const storage = getStorage();
+        const filename = `trip_images/${place}_image`;
+
+        const fileReference = ref(storage,filename);
+        // Data URL string
+        const uploadTask = uploadString(fileReference, imageSource.url);
+
+
+        uploadTask.on('state_changed', null,
+        (error) => {
+            console.log("The error is here");
+          alert(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref)
+          .then((URL) => {
+            //  console.log(URL);
+          });
+        }
+      );
+      
+    };
+    
+
+    async function uploadImageToFirebase2(){
+        const filename = `userphoto/${uid}`;
+
+    const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+
+        // on load
+        xhr.onload = function () {
+        resolve(xhr.response);
+    };
+        // on error
+        xhr.onerror = function (e) {
+        console.log(e);
+        reject(new TypeError("Network request failed"));
+    };
+        // on complete
+        xhr.responseType = "blob";
+        xhr.open("GET", pickImageResult.uri, true);
+        xhr.send(null);
+    });
+
+    // a reference that points to this 'userphoto/image_name' location 
+    const fileRef = ref(getStorage(), filename);
+    // upload the 'blob' (the image) in the location refered by 'fileRef'
+    const result = await uploadBytes(fileRef, blob);
+
+    // We're done with the blob, close and release it
+    blob.close();
+
+    // setFile(filename);
+    setFileReference(fileRef);
+    
+    };
+
+    const sendToStorage = async () => {
+        console.log("sendToStorage()..");
+        const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+    
+            // on load
+            xhr.onload = function () {
+            resolve(xhr.response);
+        };
+            // on error
+            xhr.onerror = function (e) {
+            console.log(e);
+            reject(new TypeError("Network request failed"));
+        };
+            // on complete
+            xhr.responseType = "blob";
+            xhr.open("GET", imageSource.url, true);
+            xhr.send(null);
+        });
+
+        const filename = `trip_images/${place}_image`;
+        // a reference that points to this 'userphoto/image_name' location 
+        const fileRef = ref(getStorage(), filename);
+        // upload the 'blob' (the image) in the location refered by 'fileRef'
+        const result = await uploadBytes(fileRef, blob);
+
+        // We're done with the blob, close and release it
+        blob.close();
+    }
+
+    const addPhotoReferenceToFirestore = async () => {
+        const docReference = doc(db,)
+        updateDoc(docReference,data);
+    }
+
+
     useEffect(() => {
-        //  getDataFromPlace();
          callFindPlaceApiByCity();
     },[place]);
-
-    // useEffect(() => {
-    //     if(attractions.length === 0) return;
-
-    //     setLoading(false);
-    // },[attractions]);
 
     useEffect(() => {
         if(photoReference === '') return;
         getPhoto();
+        addPhotoReferenceToFirestore();
     },[photoReference]);
 
     useEffect(() => {
         if(imageSource.url === undefined) return;
+
         setLoading(false);
     },[imageSource]);
+
+    
 
    
   return (

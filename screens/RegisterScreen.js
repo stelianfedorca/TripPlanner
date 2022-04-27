@@ -23,6 +23,7 @@ import uuid from 'uuid';
 
 import { setName, setEmail, selectFullname, selectEmail, setUid } from '../redux/reducers/userReducer';
 import { useDispatch, useSelector } from 'react-redux';
+import { setIsFirstSignIn, setIsSignedIn } from '../redux/reducers/authReducer';
 
 const RegisterScreen = ({navigation}) => {
     const [nameInput, setNameInput] = useState('');
@@ -38,24 +39,13 @@ const RegisterScreen = ({navigation}) => {
     const n = useSelector(selectFullname);
     const e = useSelector(selectEmail);
 
-    // const navigation = useNavigation();
-
     // root storage reference
     const storage = getStorage();
     
     const navigateTo = (screen) => {
         navigation.replace(screen);
     }
-    // onAuthStateChanged(auth, user => {
-    //     if(user && isRegistered === false){
-    //         // User is signed in
-    //         navigateTo('Account');
-    //     }else{
-    //         // User is signed out
-    //     }
-    // })
-
-
+   
     // the header's height
     const headerHeight = useHeaderHeight();
 
@@ -222,7 +212,7 @@ const RegisterScreen = ({navigation}) => {
                     dispatch(setEmail(emailInput));
 
                     setDoc(docRef,data);
-                    setIsRegistered(true);
+                    // setIsRegistered(true);
 
             // Add photo to the current user
             // uploadUserPhoto(userPhoto.localUri);
@@ -234,10 +224,28 @@ const RegisterScreen = ({navigation}) => {
     };
 
     useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth,(user) => {
+            if(user){
+                dispatch(setIsSignedIn(true));
+
+            } else {
+                console.log("The user is not logged in");
+            }   
+
+            return () => unsubscribe(); // unsubscribing from the listener when the component is unmounting.
+        });
+    },[]);
+
+    useEffect(() => {
         if(isRegistered){
-            navigateTo('Upload');
+            dispatch(setIsSignedIn(true));
+            dispatch(setIsFirstSignIn(true));
         }
     },[isRegistered]);
+
+    const navigateToLoginScreen = () => {
+        navigation.replace('Login');
+    }
 
 
 // GOOD TO USE : METHOD 2
@@ -305,14 +313,13 @@ const RegisterScreen = ({navigation}) => {
         console.log("e: ",e);
     }
 
-    const displayAllUsers = () => {
-
-    }
+    
   return (
     <KeyboardAvoidingView
-    keyboardVerticalOffset={headerHeight}
+    // keyboardVerticalOffset={headerHeight}
     style={styles.container}
-    behavior={Platform.IOS === 'ios' ? "padding" : "height"}
+    behavior={Platform.IOS === 'ios' ? "padding" : null}
+    keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
     >
 
     {/* Circle for design */}
@@ -355,33 +362,19 @@ const RegisterScreen = ({navigation}) => {
         </TouchableOpacity>
     </View>
 
-        <Button 
-            title="display name"
-            style={{marginTop:10,flex:1,justifyContent:'flex-start'}}
-            onPress={displayUserDetails}
-        />
+    <View style={styles.containerAlreadyAccount}>
+            <Text style={[styles.textNoAcc, {color: '#878484'}]}>Already have an account?</Text>
+            
+            <TouchableOpacity
+            style={{ marginStart:5,}}
+            onPress={navigateToLoginScreen}
+            >
+            <Text 
+            style={[styles.textNoAcc,{fontWeight:'bold', color: '#323030',}]}>Sign in</Text>
+            </TouchableOpacity>
+        </View>
 
-        <Button 
-            title="choose an image"
-            style={{marginTop:10,flex:1,justifyContent:'flex-start'}}
-            onPress={chooseImage}
-        />
 
-        <Button 
-            title="display image"
-            style={{marginTop:10,flex:1,justifyContent:'flex-start'}}
-            onPress={display}
-        />
-
-        <TouchableOpacity 
-        onPress={displayAllUsers}
-        style={{justifyContent:'center',alignItems:'center',flex:1,backgroundColor:'red'}}>
-            <Text>Display all the users</Text>
-        </TouchableOpacity>
-      <Image 
-      style={styles.thumbnail}
-      source={{uri: userPhoto.localUri}}    
-      />
     </KeyboardAvoidingView>
   );
 };
@@ -394,6 +387,7 @@ const styles = StyleSheet.create({
         alignItems:'center',
         justifyContent:'center',
         backgroundColor:'white',
+        overflow:'hidden',
     },
     input:{ 
        backgroundColor:'#F5F4F4',
@@ -462,5 +456,13 @@ const styles = StyleSheet.create({
         fontWeight:'700',
         color:'white',
     },
+
+    containerAlreadyAccount:{
+        flexDirection: 'row',
+        width:'60%',
+        justifyContent:'center',
+        alignItems:'baseline',
+        marginTop:30,
+    }
 
 });

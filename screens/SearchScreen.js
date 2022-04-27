@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import GooglePlacesInput from './GooglePlacesInput';
 import { StackActions } from '@react-navigation/native';
@@ -8,14 +8,13 @@ import { useDispatch } from 'react-redux';
 import { setPlaceSearched } from '../redux/reducers/searchReducer';
 
 const SearchScreen = ({navigation}) => {
+  const ref = useRef();
+
+  useEffect(() => {
+    ref.current?.focus();
+  },[]);
 
   const dispatch = useDispatch();
-
-  const goBack = () => {
-    // const popAction = StackActions.pop(1);
-    // navigation.dispatch(popAction);
-    // navigation.replace('Google');
-  }
 
    // In this function I set the place into store using Redux
    const setData = (data) => {
@@ -31,19 +30,20 @@ const SearchScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       <GooglePlacesAutocomplete
+                        ref={ref}
                         placeholder='Where to ?'
                         onPress={setData}
                         query={{
                             key:'AIzaSyBK5lXWrezjxCJnfSmVfukDVzivZbcNFT4',
                             language:'en',
                         }}
+                        
                         styles={{
                           container: {
                           flex:2,
                           justifyContent:'flex-start',
                           alignItems:'center',
                           marginTop:50,
-                          
                         }, 
                         textInput: {
                           backgroundColor: '#E8E8E8',

@@ -80,25 +80,15 @@ export default function AccountScreen({navigation}) {
       });
 
   },[image]);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, user => {
-      if(user){
-        console.log("uid: ", user.uid, "email: ", user.email, "name: ", user.displayName);
-      }else{
-        console.log("No user sorry");
-      }
-    })
-
-    return () => unsubscribe(); // unsubscribing from the listener when the component is unmounting.
-  },[])
   
   // View or SafeAreView
   return (
-    <View style={{flex:1,backgroundColor:'white', borderWidth:3, borderColor:'blue'}}>
-        <AccountInfo/>
-        <TopBar/>
-    </View>
+    <>
+      <AccountInfo/>
+      <TopBar/>
+    </>
+    // // <View style={{flex:1,backgroundColor:'white'}}>
+    // {/* </View> */}
   );
   
 }

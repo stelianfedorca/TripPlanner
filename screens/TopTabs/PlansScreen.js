@@ -1,67 +1,89 @@
-import { ActivityIndicator, FlatList, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import {FlatList, Image, Pressable, StyleSheet, Text, TouchableOpacity, View, SafeAreaView} from 'react-native'
 import React, { useRef } from 'react'
 import { useState } from 'react'
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { selectEmail } from '../../redux/reducers/userReducer';
+import { selectEmail, selectUid } from '../../redux/reducers/userReducer';
 import {v4 as uuidv4} from 'uuid';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 import { selectIsNewTripAdded, setIsNewTripAdded } from '../../redux/reducers/tripReducer';
 import { useDispatch } from 'react-redux';
-import {useIsFocused} from '@react-navigation/native';
 import { selectPlace, setPlace } from '../../redux/reducers/placeReducer';
-
-   
-   
-
-    
+import { ActivityIndicator, Colors } from 'react-native-paper';
 
     // HOW TO FETCH PLANS' IMAGES
     // 1. get image name from every doc
     // 2. fetch the image from storage using the image name
 
-    const PlansScreen = ({navigation}) => {
+const PlansScreen = ({navigation}) => {
     const [tripPlans, setTripPlans] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
     const isNewTripAdded = useSelector(selectIsNewTripAdded);
     const dispatch = useDispatch();
+    const email = useSelector(selectEmail);
+    const uid = useSelector(selectUid);
     const isInitialMount = useRef(true);
 
+    const apiKey = 'AIzaSyBK5lXWrezjxCJnfSmVfukDVzivZbcNFT4';
+    
+    
+    // using the hook to access the redux store's state. ('place' in our case)
+    // const place = useSelector(selectPlace);
+    const useTripImages = (imageName) => {
+       const [imageUrl, setImageUrl] = useState('');
+       const storage = getStorage();
 
+       useEffect(() => {
+           const fetchImage = async () => {
+               const pathReference = ref(storage,`trip_images/${imageName}`);
+               const uri = await getDownloadURL(pathReference);
+               setImageUrl({uri: uri});
+           }
 
+           fetchImage();
+       },[imageName]);
 
-     // custom hook
-     const useTripImages = (imageName) => {
-        const [imageUrl, setImageUrl] = useState('');
-        const storage = getStorage();
+       return imageUrl.uri;
+   }
 
+   // custom hook
+   const useGetImage = (imageReference) => {
+       const [image, setImage] = useState("");
         useEffect(() => {
-            const fetchImage = async () => {
-                const pathReference = ref(storage,`trips_images/${imageName}.jpg`);
-                const uri = await getDownloadURL(pathReference);
-                setImageUrl({uri: uri});
-            }
+            const getImageFromReference = async () => {
+                var config = {
+                    method: 'get',
+                    url: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=${imageReference}&key=${apiKey}`,
+                    headers: { }
+                };
+            
+                var axios = require('axios');
+            
+                axios(config)
+                .then(function (response) {
+                    setImage({url: response.request.responseURL});
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+                };
+                getImageFromReference();
+        },[]);
 
-            fetchImage();
-        },[imageName]);
+        return image.url;
+}
 
-        return imageUrl.uri;
-    }
-    
-    
-    
     const Item = ({item}) => {
-        const {title, image, place} = item;
+        const {title, image, place, imageReference} = item;
 
-        const url = useTripImages(image);
-       // const currentPlace = useSelector(selectPlace);
+        const url = useGetImage(imageReference);
 
-        const goToOverviewScreen = () => {
+        const goToOverviewScreen = async () => {
             dispatch(setPlace(place));
-            navigation.replace('Overview');
+            navigation.navigate('Overview');
         };
         
         return (
@@ -83,40 +105,24 @@ import { selectPlace, setPlace } from '../../redux/reducers/placeReducer';
         );
     }
 
-    // const isFocused = useIsFocused();
-
-
-    // custom hook to get the trip plans associated with the current user
-    // NOT USED
-    const useTripPlans = async (isNewTripAdded) => {
-        useEffect(() => {
-            if(isNewTripAdded){
-                getPlans();
-            }
-
-            console.log("getPlans() is called...");
-        },[isNewTripAdded]);
-    }
-
-
-    const email = useSelector(selectEmail);
 
     const _renderItem = ({item}) => (
         <Item item={item}/>
-    );
+    )
+       
 
     const getPlans = async () => {
-        const querySnapshot = await getDocs(collection(db,'users',email,'trip_plans'));
+        const querySnapshot = await getDocs(collection(db,'users',uid,'trip_plans'));
     
         const tempArray = [];
         querySnapshot.forEach((doc) => {
-                // const pathReference = ref(storage,`trips_images/${img}.jpg`);
                     tempArray.push(
                            {
                            id: uuidv4(),
                            title: doc.data().title,
                            image: doc.data().image,
                            place: doc.data().place,
+                           imageReference: doc.data().imageReference,
                        }
             );
         });
@@ -166,20 +172,25 @@ import { selectPlace, setPlace } from '../../redux/reducers/placeReducer';
         setIsLoading(false);
     },[tripPlans]);
 
+    const separator = () => (
+        <View style={styles.separator}/>
+    )
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
     { isLoading ? (
         <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
-          <ActivityIndicator size="large" color="#000" />
+          <ActivityIndicator animating={true} color={Colors.blue200} size={24}/>
           </View>
     ): (
       <FlatList
         data={tripPlans}
         renderItem={_renderItem}
         keyExtractor={(item,index) => item.id}
+        ItemSeparatorComponent={separator}
       />
     )}
-    </View>
+    </SafeAreaView>
   )
 }
 
@@ -193,12 +204,16 @@ const styles = StyleSheet.create({
     item:{
         padding:20,
         backgroundColor:'white',
-        borderBottomWidth:1,
-        borderBottomColor:'#D2D2D2',
+        
         height:130,
         flexDirection:'row',
         // justifyContent:'space-around',
         // justifyContent:'center',
         
+    },
+    separator:{
+        // backgroundColor:'red',
+        borderWidth:1,
+        borderColor:'#D2D2D2',
     }
 })

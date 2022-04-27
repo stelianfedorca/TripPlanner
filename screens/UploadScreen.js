@@ -8,10 +8,11 @@ import { useNavigation } from '@react-navigation/native';
 import { onAuthStateChanged, updateProfile } from 'firebase/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUid, setImageUrl } from '../redux/reducers/userReducer';
+import { setIsFirstSignIn } from '../redux/reducers/authReducer';
 
 
 const UploadScreen = ({navigation}) => {
-    // const [image, setImage] = useState('');
+    const [image, setImage] = useState('');
     // const [email, setEmail] = useState('');
     // const [name, setName] = useState('');
     // const [imgfirebase, setImgfirebase] = useState('');
@@ -35,7 +36,6 @@ const UploadScreen = ({navigation}) => {
     const updateUserWithPhoto = async (filename) => {
         const docRef = doc(db,'users',email)
         
-        console.log("Filename: ",filename);
 
         const data = {
             postImage: filename,
@@ -124,35 +124,35 @@ const UploadScreen = ({navigation}) => {
     async function uploadImageToFirebase2(){
         const filename = `userphoto/${uid}`;
 
-    const blob = await new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
+        const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
 
-        // on load
-        xhr.onload = function () {
-        resolve(xhr.response);
-    };
-        // on error
-        xhr.onerror = function (e) {
-        console.log(e);
-        reject(new TypeError("Network request failed"));
-    };
-        // on complete
-        xhr.responseType = "blob";
-        xhr.open("GET", pickImageResult.uri, true);
-        xhr.send(null);
-    });
+            // on load
+            xhr.onload = function () {
+            resolve(xhr.response);
+        };
+            // on error
+            xhr.onerror = function (e) {
+            console.log(e);
+            reject(new TypeError("Network request failed"));
+        };
+            // on complete
+            xhr.responseType = "blob";
+            xhr.open("GET", pickImageResult.uri, true);
+            xhr.send(null);
+        });
 
-    // a reference that points to this 'userphoto/image_name' location 
-    const fileRef = ref(getStorage(), filename);
-    // upload the 'blob' (the image) in the location refered by 'fileRef'
-    const result = await uploadBytes(fileRef, blob);
+        // a reference that points to this 'userphoto/image_name' location 
+        const fileRef = ref(getStorage(), filename);
+        // upload the 'blob' (the image) in the location refered by 'fileRef'
+        const result = await uploadBytes(fileRef, blob);
 
-    // We're done with the blob, close and release it
-    blob.close();
+        // We're done with the blob, close and release it
+        blob.close();
 
-    // setFile(filename);
-    setFileReference(fileRef);
-    
+        // setFile(filename);
+        setFileReference(fileRef);
+        
     };
 
     const chooseImage2 = async () => {
@@ -230,53 +230,10 @@ const UploadScreen = ({navigation}) => {
         return () => unsubscribe();
     },[downloadedImage]);
 
-  
-        //             const img = await fetch(image);
-        //             const blob = await img.blob();
-        
-        //             console.log("Uploading image...");
-        
-        //             // upload data to storage
-        //             const uploadTask = uploadBytesResumable(storageRef,blob);
-        
-        
-        //                 // Listen for state changes, errors, and completion of the upload.
-        //             uploadTask.on('state_changed',(snapshot) => {
-        //     // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-        //     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        //     console.log('Upload is ' + progress + '% done');
-        //     switch (snapshot.state) {
-        //        case 'paused':
-        //            console.log('Upload is paused');
-        //        break;
-        //        case 'running':
-        //           console.log('Upload is running');
-        //        break;
-        //     }
-        //  },
-        //  (error) => {
-        //     // this.setState({ isLoading: false })
-        //     // A full list of error codes is available at
-        //     // https://firebase.google.com/docs/storage/web/handle-errors
-        //     switch (error.code) {
-        //        case 'storage/unauthorized':
-        //           console.log("User doesn't have permission to access the object");
-        //        break;
-        //        case 'storage/canceled':
-        //           console.log("User canceled the upload");
-        //        break;
-        //        case 'storage/unknown':
-        //           console.log("Unknown error occurred, inspect error.serverResponse");
-        //        break;
-        //     }
-        //  },
-        //  () => {
-        //     // Upload completed successfully, now we can get the download URL
-        //     getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-        //        console.log('File available at ', downloadURL);
-        //        //perform your task
-        //     });
-        //  });
+    const finishAccountSetUp = () => {
+        dispatch(setIsFirstSignIn(false));
+    }
+
 
     const getImageFromFirebase = () => {
         const storage = getStorage();
@@ -298,7 +255,7 @@ const UploadScreen = ({navigation}) => {
                 setImgfirebase({url: url});
             })
             .catch((error) => console.log(error.message));
-    }
+    };
 
   return (
     <View style={styles.container}>
@@ -310,41 +267,19 @@ const UploadScreen = ({navigation}) => {
             <Text style={{fontWeight:'700', color:'white'}}>Choose Image</Text>
         </TouchableOpacity>
 
-        {/* <TouchableOpacity 
-        style={{marginBottom: 10, backgroundColor:'green', padding:10,}}
-        onPress={uploadImageToFirebase}
-        >
-            <Text style={{fontWeight:'700', color:'white'}}>Upload Image</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-        style={{marginBottom: 10, backgroundColor:'grey', padding:10,}}
-        onPress={updateUserWithPhoto}
-        >
-            <Text style={{fontWeight:'700', color:'white'}}>Add image to user doc</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-        style={{marginBottom: 10, backgroundColor:'blue', padding:10,}}
-        onPress={getImageFromFirebase}
-        >
-            <Text style={{fontWeight:'700', color:'white'}}>Get Image</Text>
-        </TouchableOpacity>
-        */}
 
         <View style={{flexDirection:'row', justifyContent:'space-between'}}> 
             <Image style={[styles.thumbnail]} source={{uri: image.url}}/>
-            {/* <Image style={[styles.thumbnail, {backgroundColor:'blue'}]} source={{uri: imgfirebase.url}}/> */}
         </View> 
         
         <View style={{marginTop:20,justifyContent:'center',alignItems:'center', width:'60%'}}>
             <TouchableOpacity
-            onPress={() => navigateTo("PhotoURLTest")}
+            onPress={finishAccountSetUp}
             style={
                 {width:'100%',padding:15,borderRadius:60,alignItems:'center',backgroundColor:'#2D90FA'}
                 }
             >
-                <Text style={{color:'white',fontWeight:'700',fontSize:16,}}>Skip</Text>
+                <Text style={{color:'white',fontWeight:'700',fontSize:16,}}>Finish</Text>
             </TouchableOpacity>
         </View>
 

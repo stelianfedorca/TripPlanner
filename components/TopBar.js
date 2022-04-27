@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView} from 'react-native'
 import React from 'react'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import GuidesScreen from '../screens/TopTabs/GuidesScreen';
@@ -8,7 +8,7 @@ const Tab = createMaterialTopTabNavigator();
 
 const TopBar = () => {
   return (
-      <View style={{flex:2,}} >
+      <SafeAreaView style={{flex:2,}} >
         <Tab.Navigator 
         initialRouteName='Plans'
         screenOptions={{
@@ -19,7 +19,7 @@ const TopBar = () => {
             <Tab.Screen options={{headerShown:false}} name='Plans' component={PlansScreen}/>
             <Tab.Screen options={{headerShown:false}} name='Guides' component={GuidesScreen}/>
         </Tab.Navigator>
-      </View>
+      </SafeAreaView>
   )
 }
 
