@@ -14,8 +14,8 @@ import UploadScreen from './UploadScreen';
 import GooglePlacesInput from './GooglePlacesInput';
 import SearchScreen from './SearchScreen';
 import OverviewScreen from './TripScreen/OverviewScreen';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
+import InfoScreen from '../components/InfoScreen';
+import { selectImageUrl } from '../redux/reducers/userReducer';
 
 const StackScreen = () => {
     const Stack = createNativeStackNavigator();
@@ -23,6 +23,7 @@ const StackScreen = () => {
     const isFirstSignIn = useSelector(selectIsFirstSignIn);
     const navigation = useNavigation();
 
+    const userImage = useSelector(selectImageUrl);
 
     const EmptyScreen = ({navigation}) => {
         useEffect(() => { 
@@ -41,24 +42,33 @@ const StackScreen = () => {
         <Tab.Navigator
             labeled={false}
             initialRouteName='Home'
-            barStyle={{ backgroundColor: 'white' }}
+            barStyle={{ backgroundColor: 'white', height:60}}
             activeColor='#2E7FE3'
-            inactiveColor='#C8C8C8'
+            inactiveColor='#B8B6B6'
             screenOptions={{
                 tabBarShowLabel:false,
-                headerShown:false,
+                // headerShown:false,
             }}
+            
             >
             <Tab.Screen 
-            options={{tabBarIcon: ({color}) => (
+            options={{
+              tabBarIcon: ({color}) => (
                 <Icon name={'home'} color={color} size={26}/>
-            )}}
-            name='Home' component={HomeScreen}/>
+            ),
+            animation:'slide_from_right'
+            }}
+            name='Home' component={HomeScreen}
+
+            />
     
             <Tab.Screen
-            options={{tabBarIcon: ({color}) => (
+            options={{
+              tabBarIcon: ({color}) => (
                 <Icon name={'plus'} color={color} size={26}/>
-            )}}
+              ),
+              headerShown:false,
+            }}
             name='Add'
             component={EmptyScreen}
             listeners={({navigation, route}) => (
@@ -75,9 +85,10 @@ const StackScreen = () => {
             <Tab.Screen 
             options={{
                 tabBarIcon: ({color}) => (
-                <Icon name={'user-circle-o'} color={color} size={26}/>
+                  <Icon name={'user-circle-o'} color={color} size={26}/>
             ),
-            animationTypeForReplace: isSignedIn ? 'push' : 'push',
+            headerShown:false,
+            animationTypeForReplace: isSignedIn ? 'pop' : 'push',
             
             }} 
             name='Account' component={AccountScreen}/>
@@ -107,13 +118,19 @@ const StackScreen = () => {
               }
                 <Stack.Screen options={{headerShown: false, animation:'fade_from_bottom'}} name="Google" component={GooglePlacesInput}/>
                 <Stack.Screen options={{headerShown: false, animation:'fade'}} name="Search" component={SearchScreen}/>
-                <Stack.Screen options={{headerShown:false}} name="Overview" component={OverviewScreen}/>
+                <Stack.Screen options={{headerShown:false, animation:'slide_from_right'}} name="Overview" component={OverviewScreen}/>
+                <Stack.Screen 
+                name="Info" 
+                component={InfoScreen}
+                options={{
+                  animation:'slide_from_right'
+                }} 
+                />
                 {/* 
                 <Stack.Screen options={{headerShown:false}} name="PlaceHolder" component={BottomSheetPlaceholder}/>
                 <Stack.Screen options={{headerShown:false}} name="Account" component={AccountScreen} />
                 <Stack.Screen options={{headerShown: false}} name="AddSubcoll" component={AddSubcollectionScreen}/>
 
-                <Stack.Screen name="Info" component={InfoScreen}/>
                  */}
                 
               </>

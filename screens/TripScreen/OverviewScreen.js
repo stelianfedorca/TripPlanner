@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, Text, View, Image, ActivityIndicator} from 'react-native'
+import { FlatList, StyleSheet, Text, View, Image, ActivityIndicator, SafeAreaView, Animated} from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
@@ -232,20 +232,20 @@ const OverviewScreen = ({navigation}) => {
 
    
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
     {loading ? (
         <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
           <ActivityIndicator size="large" color="#000" />
           </View>
     ):( 
-        <View style={{flex:1}}>
+        <Animated.View style={{flex:1}}>
             <HeaderCustom image={imageSource.url} />
             <TopBarOverview/>
-        </View>
+        </Animated.View>
 
     )}
 
-    </View>
+    </SafeAreaView>
   )
 }
 
@@ -256,8 +256,6 @@ const styles = StyleSheet.create({
     container:{
         flex:1,
         flexDirection:'column',
-        // justifyContent:'center', 
-        // alignItems:'center', 
         backgroundColor:'white',
     },
 

@@ -16,7 +16,6 @@ const AddSubcollectionScreen = () => {
 
   const currentUser = useSelector(selectEmail);
   const currentPlace = useSelector(selectPlace);
-  console.log(currentPlace);
 
 
 
@@ -30,7 +29,6 @@ const AddSubcollectionScreen = () => {
           const data = docSnap.data();
     
           const bytes = sizeof(data);
-          console.log(bytes);
       } else {
         console.log("No such document!");
       }        

@@ -13,16 +13,16 @@ import { createSlice } from "@reduxjs/toolkit";
         initialState: initialState(),
         reducers:{
             setUid: (state, action) => {
+                console.log("Action TYPE ==> ", action.type);
                 state.uid = action.payload;
             },
             
             setName: (state, action) => {
-                console.log("setName called with: " + action.payload);
                 state.fullname = action.payload;
             },
 
             setEmail: (state, action) => {
-                console.log("setEmail called with: " + action.payload);
+                console.log("Action TYPE ==> ", action.type);
                 state.email = action.payload;
             },
 

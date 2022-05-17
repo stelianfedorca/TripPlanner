@@ -74,7 +74,8 @@ const styles = StyleSheet.create({
     },
     floatingSection:{
       position:'absolute',
-      backgroundColor:'white',
+      backgroundColor:'#F3F3F3',
+      opacity:0.85,
       width:260,
       height:70,
 

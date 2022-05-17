@@ -25,11 +25,8 @@ const GooglePlacesInput = ({navigation}) => {
 
 
     const placeSearched = useSelector(selectPlaceSearched);
-
     
     const apiKey = 'AIzaSyBK5lXWrezjxCJnfSmVfukDVzivZbcNFT4';
-
-
 
     const addTripToUser = async () => {
       const tripData = {
@@ -129,7 +126,7 @@ const GooglePlacesInput = ({navigation}) => {
                   </View>
                   <TouchableOpacity style={styles.searchContainer} onPress={displaySearchScreen}>
                       <Text style={{fontWeight:'bold'}}>Where to?  </Text>
-                      <Text style={{color:'#999797', fontWeight:'100'}}>{placeSearched === (undefined || '') ? 'e.g., Paris,Hawaii, Japan': placeSearched}</Text>
+                      <Text style={{color:'#5B5B5B', fontWeight:'500'}}>{placeSearched === (undefined || '') ? 'e.g., Paris,Hawaii, Japan': placeSearched}</Text>
                   </TouchableOpacity>
                 </View>
                   <TouchableOpacity style={styles.back} onPress={goBack}>
@@ -158,6 +155,7 @@ export default GooglePlacesInput
 const styles = StyleSheet.create({
     container:{
       flex:1,
+      backgroundColor:'white'
       // borderWidth:2,
       // borderColor:'red',
     },

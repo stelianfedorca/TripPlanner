@@ -11,7 +11,7 @@ const Tab = createMaterialTopTabNavigator();
 
 const TopBarOverview = () => {
   return (
-      <View style={{flex:2}}>
+      <View style={styles.container}>
         <Tab.Navigator 
         initialRouteName='Recommended'
         screenOptions={{
@@ -33,4 +33,10 @@ const TopBarOverview = () => {
 
 export default TopBarOverview
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  container:{
+    flex:2,
+    // borderWidth:1,
+    // borderColor:'red',
+  }
+})

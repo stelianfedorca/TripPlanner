@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     isSignedIn: false,
-    isFirstSignIn: false,
+    isFirstSignIn: true,
 };
 
 const options = {

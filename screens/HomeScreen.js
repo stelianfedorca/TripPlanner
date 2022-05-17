@@ -9,58 +9,83 @@ import { useSelector } from 'react-redux';
 import { selectImage, setImage } from '../redux/reducers/userReducer';
 import { collection, getDocs} from "firebase/firestore";
 import {v4 as uuidv4} from 'uuid';
+import { selectIsFirstSignIn, selectIsSignedIn } from '../redux/reducers/authReducer';
+import HomeHeader from '../components/HomeHeader';
 
+const DATA = [
+    {
+      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
+      title: 'London',
+      image: require('../assets/london-app.jpg'),
+      user: 'user name 2',
+    },
+    {
+      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
+      title: 'Vienna',
+      image: require('../assets/vienna-app.jpg'),
+      user: 'user name 3',
+    },
+    {
+      id: '58694a0f-3da1-471f-bd96-145571e29d72',
+      title: 'Madrid',
+      image: require('../assets/madrid-app.jpg'),
+      user: 'user name 4',
+    },
+    {
+      id: '58694a0f-3da1-471f-bd96-145571e29d73',
+      title: 'Budapest',
+      image: require('../assets/budapesta.jpg'),
+      user: 'user name 5',
+    },
+  ];
 const HomeScreen = ({navigation}) => {
     const [users, setUsers] = useState([]);
+    const isSignedIn = useSelector(selectIsSignedIn);
+    const isFirstSignedIn = useSelector(selectIsFirstSignIn);
+    
 
-    // show the email for every user
-    const getUsers = async () => {
+    useEffect(() => {
+      navigation.setOptions({
+        headerShown:false
+      });
+    },[]);
+
+    useEffect(() => {
+      
+    },[]);
+    
+//  function for fetching all the users from db
+    useEffect(() => {
+      const getUsers = async () => {
         const col = collection(db,'users');
         const querySnapshot = await getDocs(col);
 
         let tempArray = [];
 
         querySnapshot.forEach((doc) => {
-            tempArray.push(
-                {
-                    id: uuidv4(),
-                    title: doc.data().name
-                }
-            );
+          console.log(doc.id, " ==> ", doc.data());
+            // tempArray.push(
+            //     {
+            //         id: uuidv4(),
+            //         title: doc.data().name
+            //     }
+            // );
         });
 
         setUsers(tempArray);
     };
-
-    useEffect(() => {
         getUsers();
     },[]);
     
 
-    const DATA = [
-        {
-          id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-          title: 'London',
-          image: '../assets/london-app.jpg'
-        },
-        {
-          id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-          title: 'Vienna',
-          image: '../assets/vienna-app.jpg'
-        },
-        {
-          id: '58694a0f-3da1-471f-bd96-145571e29d72',
-          title: 'Madrid',
-          image: '../assets/madrid-app.jpg'
-        },
-      ];
 
     const Item = ({ item }) => {
-        const {title, image} = item;
+        const {title, image, user} = item;
         return (
           <View style={styles.item}>
-            <Image source={require("../assets/madrid-app.jpg")} style={{width:200, height:200, resizeMode:'contain'}}/>
-              <Text style={styles.title}>{ title }</Text>
+            <Image source={image} style={styles.image}/>
+            <Text style={styles.username}>{user}</Text>
+            <Text style={styles.title}>{ title }</Text>
           </View>
         ); 
     }
@@ -70,6 +95,11 @@ const HomeScreen = ({navigation}) => {
         <Item item={item}/> 
     );
 
+    const ItemSeparator = () => (
+      <View style={{margin:10,}}/>
+    )
+    
+
  
   return (
     <SafeAreaView style={styles.container}>
@@ -77,6 +107,7 @@ const HomeScreen = ({navigation}) => {
             data={DATA}
             renderItem={_renderItem}
             keyExtractor={(item) => item.id}
+            ItemSeparatorComponent={ItemSeparator}
         />
 
     </SafeAreaView>
@@ -88,7 +119,8 @@ export default HomeScreen;
 const styles = StyleSheet.create({
     container:{
         flex:1,
-        backgroundColor:'white',
+        
+        // backgroundColor:'#FFFFFF',
     },
     button:{
         borderRadius:10,
@@ -106,13 +138,33 @@ const styles = StyleSheet.create({
         fontWeight:"700",
     },
     item: {
-    backgroundColor: '#f9c2ff',
-    padding: 40,
-    marginVertical: 8,
-    marginHorizontal:16,
-    // height:150,
+    backgroundColor: 'white',
+    justifyContent:'flex-start',
+    alignItems:'center',
+
+    height:275,
+    width:'100%',
+    // borderWidth:1,
+    // borderColor:'blue',
+    alignSelf:'center',
+    elevation:3,
   },
   title: {
-    fontSize: 32,
+    fontSize:16,
+    fontWeight:'bold',
+    alignSelf:'flex-start',
+    padding:5,
+    
+  },
+  username:{
+    fontSize:18,
+    alignSelf:'flex-start',
+    padding:5,
+  },
+  image:{
+    width:'100%',
+    height:200,
+    resizeMode:'cover',
+    // borderRadius:15,
   },
 });

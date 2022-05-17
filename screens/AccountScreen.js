@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, Button} from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, SafeAreaView} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import {auth, db} from '../firebase';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
@@ -16,11 +16,11 @@ import PlansScreen from './TopTabs/PlansScreen';
 import GuidesScreen from './TopTabs/GuidesScreen';
 import TopBar from '../components/TopBar';
 import AccountInfo from '../components/AccountInfo';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, updateProfile } from 'firebase/auth';
 
 
 export default function AccountScreen({navigation}) {
+  const [photoUrl, setPhotoUrl] = useState("");
   const name = useSelector(selectFullname);
   const email = useSelector(selectEmail);
 
@@ -80,15 +80,26 @@ export default function AccountScreen({navigation}) {
       });
 
   },[image]);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if(user){
+        const photoUrl = user.photoURL;
+        setPhotoUrl({url: photoUrl});        
+      } else {
+          console.log("The user is not logged in");
+      }
+  });
+
   
-  // View or SafeAreView
+  return () => unsubscribe();
+  },[]);
+  
   return (
     <>
-      <AccountInfo/>
+      <AccountInfo photoURL={photoUrl.url}/>
       <TopBar/>
     </>
-    // // <View style={{flex:1,backgroundColor:'white'}}>
-    // {/* </View> */}
   );
   
 }

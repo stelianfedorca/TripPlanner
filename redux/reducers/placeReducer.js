@@ -1,6 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 
     const initialState = {
+        id: "",
         name: 'temp_place',
     }
 
@@ -10,13 +11,16 @@ import {createSlice} from '@reduxjs/toolkit';
         reducers: {
             setPlace: (state, action) => {
                 state.name = action.payload;
+            },
+            setPlaceId: (state, action) => {
+                state.id = action.payload;
             }
         }
     });
 
     // action creators
-    export const {setPlace} = placeReducer.actions;
+    export const {setPlace, setPlaceId} = placeReducer.actions;
 
+    export const selectPlaceId = (state) => state.place.id;
     export const selectPlace = (state) => state.place.name;
-
     export default placeReducer;

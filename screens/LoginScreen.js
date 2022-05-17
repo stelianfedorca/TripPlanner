@@ -7,7 +7,7 @@ import {auth, db} from '../firebase';
 import { useDispatch } from 'react-redux';
 import { setEmail, setName, setUid } from '../redux/reducers/userReducer';
 import { collection, doc, getDoc } from 'firebase/firestore';
-import { setIsSignedIn } from '../redux/reducers/authReducer';
+import { setIsFirstSignIn, setIsSignedIn } from '../redux/reducers/authReducer';
 
 const LoginScreen = ({navigation}) => {
     // react hooks
@@ -21,9 +21,13 @@ const LoginScreen = ({navigation}) => {
         navigation.replace("Register");
     };
 
-    const handleSignIn = () => {
+    const handleSignIn = async () => {
         signInWithEmailAndPassword(auth,emailInput,password)
-        .catch(error => alert(error.message))
+            .then((user) => {
+                dispatch(setIsFirstSignIn(false));
+            })
+        .catch(error => alert(error.message));
+
     };
 
     useEffect(() => {
@@ -59,9 +63,7 @@ const LoginScreen = ({navigation}) => {
     >
     {/* Top circle for UI design */}
     <View style={styles.circleTopRight}></View>
-    {/* <View style={{borderWidth:2, borderColor:'red', width:'100%', justifyContent:'center',alignItems:'flex-start', padding:20,}}>
-        <Text style={{fontSize:32}}>Log In</Text>
-    </View> */}
+    <Text style={styles.textSignIn}>Sign In</Text>
 
       <View style={styles.inputContainer}>
         <TextInput
@@ -137,7 +139,7 @@ const styles = StyleSheet.create({
     input:{
         backgroundColor:'#F5F4F4',
         paddingHorizontal:15,
-        paddingVertical:10,
+        paddingVertical:15,
         borderRadius:10,
         marginTop:5,
 
@@ -235,5 +237,16 @@ const styles = StyleSheet.create({
     textNoAcc:{
         fontSize:14.5,
     },
+    textSignIn:{
+        fontSize:48,
+        fontWeight:'bold',
+        alignSelf:'stretch',
+        alignContent:'flex-start',
+        justifyContent:'flex-start',
+        marginStart:40,
+        opacity:0.7,
+        color:'#000',
+        marginBottom:5,
+    }
     
 });

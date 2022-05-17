@@ -1,14 +1,13 @@
-import { StyleSheet, Text, View,TouchableOpacity, FlatList, Image, ActivityIndicator} from 'react-native'
+import { StyleSheet, Text, View,TouchableOpacity, FlatList, Image, ActivityIndicator, SafeAreaView} from 'react-native'
 import React, { useEffect, useState, useRef } from 'react'
 import axios from 'axios';
-import { useIsFocused } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { selectPlace } from '../redux/reducers/placeReducer';
 import { MaterialIcons } from '@expo/vector-icons';
 import BottomSheet from 'react-native-gesture-bottom-sheet';
 import {v4 as uuidv4} from 'uuid';
 import SkeletonContent from 'react-native-skeleton-content';
-
+import Sheet from 'react-modal-sheet';
 
 const RecommendScreen = ({navigation}) => {
     const [attractions, setAttractions] = useState([]);
@@ -83,10 +82,12 @@ const RecommendScreen = ({navigation}) => {
         setIsBottomSheetLoading(false);
     },[image]);
 
-    const showAttractionDetails = (title) => {
-        bottomSheet.current.show();
-
-        getAttractionDetails(title);
+    const showAttractionDetails = (title, photoUrl) => {
+        navigation.navigate('Info',{
+            attractionSelected: title,
+            photoUrl: photoUrl,
+        });
+        // getAttractionDetails(title);
     }
 
 
@@ -123,7 +124,7 @@ const RecommendScreen = ({navigation}) => {
             
     
             return (
-                <TouchableOpacity style={styles.item} onPress={() => showAttractionDetails(title)}>
+                <TouchableOpacity style={styles.item} onPress={() => showAttractionDetails(title,image.url)}>
                     <Image source={{uri: image.url}} style={styles.imageItem}/>
                     <Text style={styles.itemTitle}>{title}</Text>
                     <MaterialIcons name="arrow-forward-ios" size={20} color="black" style={{alignSelf:'flex-end',flexShrink:2}}/>
@@ -131,12 +132,9 @@ const RecommendScreen = ({navigation}) => {
             );
         };
     
-    const renderItem = ({item}) => {
-        console.log("renderitem");
-            return (
-                <Item title={item.title} photoReference={item.photoReference}/>
-                );
-            };
+    const renderItem = ({item}) => (
+        <Item title={item.title} photoReference={item.photoReference} />
+    )
 
         // get attractions based on the city
     const getDataFromPlace = async () => {
@@ -187,7 +185,7 @@ const RecommendScreen = ({navigation}) => {
 
 
         return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
     {
         isLoading ? (
             <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
@@ -202,7 +200,14 @@ const RecommendScreen = ({navigation}) => {
                     numColumns={2}
                 />
 
-        <BottomSheet hasDraggableIcon={true} ref={bottomSheet} height={400} >
+            {/* <Sheet isOpen={isOpen} onClose={() => setOpen(false)}>
+                <Sheet.Container>
+                    <Sheet.Header />
+                    <Sheet.Content>Hello world</Sheet.Content>
+                </Sheet.Container>
+            </Sheet> */}
+
+        {/* <BottomSheet hasDraggableIcon={true} ref={bottomSheet} height={400} >
             <SkeletonContent
             style={{justifyContent:'center', flex:1,alignItems:'center'}}
             isLoading={isBottomSheetLoading}>
@@ -211,13 +216,13 @@ const RecommendScreen = ({navigation}) => {
                     <Text style={styles.bottomSheetRating}>Rating: {rating}</Text>
                     <Text style={styles.bottomSheetTotalRating}>Total Ratings: {totalRatings}</Text>
             </SkeletonContent>
-        </BottomSheet>
+        </BottomSheet> */}
 
             </>
         )
     }
         
-    </View>
+    </SafeAreaView>
   )
 }
 
@@ -225,7 +230,7 @@ export default RecommendScreen
 
 const styles = StyleSheet.create({
     container:{
-        backgroundColor:'white',
+        // backgroundColor:'white',
         flex:2,
         alignItems:'center',
     },

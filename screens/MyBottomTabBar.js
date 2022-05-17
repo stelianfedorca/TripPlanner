@@ -43,7 +43,6 @@ import AccountScreen from './AccountScreen'
 
             // if the user did not cancelled
             setSelectedImage({localUri: pickerResult.uri});
-            console.log(selectedImage.localUri);
         };
 
     return (

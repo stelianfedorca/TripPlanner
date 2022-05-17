@@ -8,15 +8,17 @@ const Tab = createMaterialTopTabNavigator();
 
 const TopBar = () => {
   return (
-      <SafeAreaView style={{flex:2,}} >
+      <SafeAreaView style={styles.container} >
         <Tab.Navigator 
         initialRouteName='Plans'
         screenOptions={{
             tabBarActiveTintColor: '#2E7FE3',
             tabBarInactiveTintColor: 'grey',
+            
         }}
+        
          >
-            <Tab.Screen options={{headerShown:false}} name='Plans' component={PlansScreen}/>
+            <Tab.Screen options={{headerShown:false,}} name='Plans' component={PlansScreen}/>
             <Tab.Screen options={{headerShown:false}} name='Guides' component={GuidesScreen}/>
         </Tab.Navigator>
       </SafeAreaView>
@@ -25,4 +27,8 @@ const TopBar = () => {
 
 export default TopBar
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  container:{
+    flex:2,
+  }
+})

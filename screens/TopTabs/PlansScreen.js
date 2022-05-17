@@ -10,8 +10,9 @@ import {v4 as uuidv4} from 'uuid';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 import { selectIsNewTripAdded, setIsNewTripAdded } from '../../redux/reducers/tripReducer';
 import { useDispatch } from 'react-redux';
-import { selectPlace, setPlace } from '../../redux/reducers/placeReducer';
+import { selectPlace, setPlaceId, setPlace } from '../../redux/reducers/placeReducer';
 import { ActivityIndicator, Colors } from 'react-native-paper';
+import EmptyListScreen from '../EmptyListScreen';
 
     // HOW TO FETCH PLANS' IMAGES
     // 1. get image name from every doc
@@ -20,6 +21,7 @@ import { ActivityIndicator, Colors } from 'react-native-paper';
 const PlansScreen = ({navigation}) => {
     const [tripPlans, setTripPlans] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isQueryEmpty, setIsQueryEmpty] = useState(false);
 
     const isNewTripAdded = useSelector(selectIsNewTripAdded);
     const dispatch = useDispatch();
@@ -77,12 +79,13 @@ const PlansScreen = ({navigation}) => {
 }
 
     const Item = ({item}) => {
-        const {title, image, place, imageReference} = item;
+        const {title, image, place, imageReference, docId} = item;
 
         const url = useGetImage(imageReference);
 
         const goToOverviewScreen = async () => {
             dispatch(setPlace(place));
+            dispatch(setPlaceId(docId));
             navigation.navigate('Overview');
         };
         
@@ -113,8 +116,10 @@ const PlansScreen = ({navigation}) => {
 
     const getPlans = async () => {
         const querySnapshot = await getDocs(collection(db,'users',uid,'trip_plans'));
-    
         const tempArray = [];
+        if(querySnapshot.docs.length === 0){
+            setIsQueryEmpty(true);
+        }
         querySnapshot.forEach((doc) => {
                     tempArray.push(
                            {
@@ -123,6 +128,7 @@ const PlansScreen = ({navigation}) => {
                            image: doc.data().image,
                            place: doc.data().place,
                            imageReference: doc.data().imageReference,
+                           docId: doc.id
                        }
             );
         });
@@ -172,6 +178,12 @@ const PlansScreen = ({navigation}) => {
         setIsLoading(false);
     },[tripPlans]);
 
+    useEffect(() => {
+        if(isQueryEmpty === true){
+            setIsLoading(false);
+        }
+    },[isQueryEmpty]);
+
     const separator = () => (
         <View style={styles.separator}/>
     )
@@ -188,6 +200,7 @@ const PlansScreen = ({navigation}) => {
         renderItem={_renderItem}
         keyExtractor={(item,index) => item.id}
         ItemSeparatorComponent={separator}
+        ListEmptyComponent={EmptyListScreen}
       />
     )}
     </SafeAreaView>

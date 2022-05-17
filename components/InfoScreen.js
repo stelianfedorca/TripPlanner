@@ -1,10 +1,21 @@
-import { StyleSheet, Text, View, Image, ActivityIndicator} from 'react-native'
+import { StyleSheet, Text, View,Image, TouchableOpacity} from 'react-native'
 import React, {useEffect, useState,useRef} from 'react';
 import BottomSheet from 'react-native-gesture-bottom-sheet';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
+import { ActivityIndicator } from 'react-native-paper';
+import { addDoc, collection } from 'firebase/firestore';
+import { db } from '../firebase';
+import { useSelector } from 'react-redux';
+import { selectUid } from '../redux/reducers/userReducer';
+import { selectPlaceId } from '../redux/reducers/placeReducer';
 
 const InfoScreen = ({route,navigation}) => {
+  const {attractionSelected, photoUrl} = route.params;
+  const apiKey = 'AIzaSyBK5lXWrezjxCJnfSmVfukDVzivZbcNFT4';
+  const uid = useSelector(selectUid);
+  const tripId = useSelector(selectPlaceId);
+
   const [loading, setLoading] = useState(true);
   const [imageSource, setImageSource] = useState('');
   const [rating, setRating] = useState('');
@@ -12,15 +23,9 @@ const InfoScreen = ({route,navigation}) => {
   const [placeId, setPlaceId] = useState('');
   const [photoReference, setPhotoReference] = useState('');
 
-  const {attractionSelected} = route.params;
-
-  // const attractionSelected = '';
-
-  // const {bottomSheet, attractionSelected} = {bottomSheetProps, attractionSelectedProps};
-
-  const apiKey = 'AIzaSyBK5lXWrezjxCJnfSmVfukDVzivZbcNFT4';
-
-  // const navigation = useNavigation();
+  useEffect(() => {
+    console.log(tripId);
+  },[]);
 
   const setLoadingAfterTimeOut = async () => {
     setTimeout(() => {
@@ -90,43 +95,47 @@ const InfoScreen = ({route,navigation}) => {
       
   };
 
- 
-
-  useEffect(() => {
-    if(attractionSelected === '') return ;
-    callFindPlaceApiByAttractionSelected();
-  },[attractionSelected]);
+  // useEffect(() => {
+  //   if(attractionSelected === '') return ;
+  //   callFindPlaceApiByAttractionSelected();
+  // },[attractionSelected]);
 
   
-  useEffect(() => {
-    if(photoReference === '') return ;
+  // useEffect(() => {
+  //   if(photoReference === '') return ;
 
-    getPhoto();
+  //   getPhoto();
     
-  },[photoReference]);
+  // },[photoReference]);
 
-  useEffect(() => {
-    if(imageSource.url === undefined) return ;
+  // useEffect(() => {
+  //   if(imageSource.url === undefined) return ;
 
-    setLoading(false);
-  },[imageSource])
+  //   setLoading(false);
+  // },[imageSource])
+
+  const addToTrip = async () => {
+    const attractionData = {
+      attraction: attractionSelected,
+      image: photoUrl,
+    };
+
+    // get the reference to subcollection
+    // if it's not created yet, create it
+    const subCollRef = collection(db,`users/${uid}/trip_plans/${tripId}/itinerary/`);
+
+    // add the doc inside the subcollection
+    addDoc(subCollRef, attractionData);
+  }
+
 
 
   return (
         <View style={styles.container}>
-        {loading ? (
-          <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
-          <ActivityIndicator size="large" color="#000" />
-          </View>
-        ): (
-          <View style={{flex:1,}}>
-            {/* <HeaderCustom/> */}
-            {/* <Image source={{uri: imageSource.url}} style={styles.thumbnail}/>
-            <Text style={styles.text} >Title: {attractionSelected}</Text>
-            <Text style={styles.text} >Rating: {rating}</Text>
-            <Text>Hello world</Text> */}
-          </View>
-        )}
+            <Image source={{uri: photoUrl}} style={styles.thumbnail}/>
+            <TouchableOpacity style={styles.addToTrip} onPress={addToTrip}>
+              <Text style={styles.addToTripText}>Add to trip</Text>
+            </TouchableOpacity>
         </View>
 
   )
@@ -149,6 +158,15 @@ const styles = StyleSheet.create({
   text:{
     fontSize:20,
     fontWeight:'500',
+  },
+  addToTrip:{
+    backgroundColor:'#DF6810',
+    padding:20,
+    borderRadius:15,
+  },
+  addToTripText:{
+    color:'white',
+    fontWeight:'bold',
   }
 
 })

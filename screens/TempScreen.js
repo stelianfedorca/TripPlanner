@@ -60,7 +60,6 @@ import { useEffect } from 'react';
           
           axios(config)
           .then(function (response) {
-                console.log(response.data.candidates[0].place_id);  
                 setColosseum(response.data.candidates[0].place_id);
             //   const placeId = response.data.candidates[0].place_id;
               //   setPlaceId(placeId);
@@ -81,7 +80,6 @@ import { useEffect } from 'react';
 
           axios(config)
           .then(function (response) {
-          console.log(response);
           })
           .catch(function (error) {
           console.log(error);
@@ -120,9 +118,7 @@ import { useEffect } from 'react';
             setPhotoReference(response.data.candidates[0].photos[0].photo_reference);
             setPlaceId(response.data.candidates[0].place_id);
 
-            console.log("The rating is: " + rating);
-            console.log("The photo reference is: " + photoReference);
-            console.log("The place id is: " + placeId);
+            
 
         })
           .catch(function (error) {
@@ -152,7 +148,6 @@ import { useEffect } from 'react';
 
           axios(config)
           .then(function (response) {
-          console.log(JSON.stringify(response.data));
           })
           .catch(function (error) {
           console.log(error);

@@ -197,10 +197,11 @@ const RegisterScreen = ({navigation}) => {
                     const uid = user.uid;
                     const email = user.email;            
                     const docRef = doc(db,'users', uid);
-
-                   await updateProfile(user,{
+                    
+                    
+                    await updateProfile(user,{
                        displayName: nameInput
-                   });
+                    });
                     
                     const data = {
                         email: email,
@@ -210,9 +211,8 @@ const RegisterScreen = ({navigation}) => {
                     dispatch(setUid(uid));
                     dispatch(setName(nameInput));
                     dispatch(setEmail(emailInput));
-
+                    
                     setDoc(docRef,data);
-                    // setIsRegistered(true);
 
             // Add photo to the current user
             // uploadUserPhoto(userPhoto.localUri);
@@ -227,7 +227,7 @@ const RegisterScreen = ({navigation}) => {
         const unsubscribe = onAuthStateChanged(auth,(user) => {
             if(user){
                 dispatch(setIsSignedIn(true));
-
+                // dispatch(setIsFirstSignIn(true));
             } else {
                 console.log("The user is not logged in");
             }   
@@ -235,13 +235,14 @@ const RegisterScreen = ({navigation}) => {
             return () => unsubscribe(); // unsubscribing from the listener when the component is unmounting.
         });
     },[]);
-
-    useEffect(() => {
-        if(isRegistered){
-            dispatch(setIsSignedIn(true));
-            dispatch(setIsFirstSignIn(true));
-        }
-    },[isRegistered]);
+    
+    // useEffect(() => {
+    //     if(isRegistered){
+    //         console.log("isRegistered: ----> ", isRegistered);
+    //         dispatch(setIsFirstSignIn(true));
+    //         dispatch(setIsSignedIn(true));
+    //     }
+    // },[isRegistered]);
 
     const navigateToLoginScreen = () => {
         navigation.replace('Login');
@@ -395,6 +396,8 @@ const styles = StyleSheet.create({
        marginTop:6,
        paddingHorizontal:15,
        paddingVertical:15,
+
+       elevation:1,
     },
     thumbnail:{
         width: 200,

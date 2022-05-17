@@ -19,7 +19,7 @@ import { onAuthStateChanged, updateProfile } from 'firebase/auth';
 import { doc, updateDoc } from 'firebase/firestore';
 import { setIsSignedIn } from '../redux/reducers/authReducer';
 
-const AccountInfo = () => {
+const AccountInfo = ({photoURL}) => {
     const uid = useSelector(selectUid);
     const name = useSelector(selectFullname);
     const email = useSelector(selectEmail);
@@ -179,8 +179,8 @@ const AccountInfo = () => {
         {/* <View style={styles.topCircle}></View> */}
         <View style={{width:130}}>
             {
-                imageUrl ? (
-                    <Image source={{uri: imageUrl}} style={{width:130,height:130,borderRadius:130/2}} />
+                photoURL ? (
+                    <Image source={{uri: pickImageResult.uri? pickImageResult.uri : photoURL}} style={{width:130,height:130,borderRadius:130/2}} />
                 ): (
                     <Image source={require('../assets/icon.png')} style={{width:130,height:130,borderRadius:130/2}} />
                 )

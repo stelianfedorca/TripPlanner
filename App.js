@@ -18,6 +18,9 @@ import {
 // const Stack = createNativeStackNavigator();
 LogBox.ignoreLogs(['Setting a timer for a long period of time'])
 LogBox.ignoreLogs(['AsyncStorage has been extracted from react-native core and will be removed in a future release'])
+LogBox.ignoreLogs(['[Unhandled promise rejection: FirebaseError: ']);
+LogBox.ignoreLogs(['[Possible Unhandled Promise Rejection ']);
+LogBox.ignoreAllLogs(true);
 
 const theme = {
   ...PaperDefaultTheme,
