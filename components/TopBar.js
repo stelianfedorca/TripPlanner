@@ -14,8 +14,8 @@ const TopBar = () => {
         screenOptions={{
             tabBarActiveTintColor: '#2E7FE3',
             tabBarInactiveTintColor: 'grey',
-            
         }}
+
         
          >
             <Tab.Screen options={{headerShown:false,}} name='Plans' component={PlansScreen}/>
@@ -30,5 +30,7 @@ export default TopBar
 const styles = StyleSheet.create({
   container:{
     flex:2,
+    borderTopLeftRadius:20,
+    borderTopRightRadius:20,
   }
 })

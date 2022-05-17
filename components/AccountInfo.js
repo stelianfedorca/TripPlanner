@@ -176,34 +176,36 @@ const AccountInfo = ({photoURL}) => {
 
   return (
     <View style={styles.container}>
-        {/* <View style={styles.topCircle}></View> */}
-        <View style={{width:130}}>
-            {
-                photoURL ? (
-                    <Image source={{uri: pickImageResult.uri? pickImageResult.uri : photoURL}} style={{width:130,height:130,borderRadius:130/2}} />
-                ): (
-                    <Image source={require('../assets/icon.png')} style={{width:130,height:130,borderRadius:130/2}} />
-                )
-            }
+        <View style={styles.extension}></View>
 
-            <View style={styles.logOut}>
-                <TouchableOpacity onPress={handleSignOut}>
-                    <AntDesign name="logout" size={24} color="black"/>
-                </TouchableOpacity>
+            <View style={{width:130}}>
+                {
+                    photoURL ? (
+                        <Image source={{uri: pickImageResult.uri? pickImageResult.uri : photoURL}} style={{width:130,height:130,borderRadius:130/2}} />
+                    ): (
+                        <Image source={require('../assets/icon.png')} style={{width:130,height:130,borderRadius:130/2}} />
+                    )
+                }
+
+
+                <View style={styles.logOut}>
+                    <TouchableOpacity onPress={handleSignOut}>
+                        <AntDesign name="logout" size={24} color="black"/>
+                    </TouchableOpacity>
+                </View>
+
+                <View style={{position: 'absolute', right:-2, bottom:1,}}>
+                    <TouchableOpacity onPress={chooseImage}>
+                        <MaterialCommunityIcons name="pencil-circle" size={42} color="black"/>
+                    </TouchableOpacity>
+                </View>
+            
             </View>
 
-            <View style={{position: 'absolute', right:-2, bottom:1,}}>
-                <TouchableOpacity onPress={chooseImage}>
-                    <MaterialCommunityIcons name="pencil-circle" size={42} color="black"/>
-                </TouchableOpacity>
+            <View style={{justifyContent:'center',alignItems:'center',margin:10,}}>
+                <Text style={styles.name}>{name}</Text>
+                <Text style={styles.email}>{email}</Text>
             </View>
-        
-        </View>
-
-        <View style={{justifyContent:'center',alignItems:'center',margin:10,}}>
-            <Text style={styles.boldName}>{name}</Text>
-            <Text>{email}</Text>
-        </View>
     </View>
   )
 }
@@ -213,7 +215,7 @@ export default AccountInfo
 const styles = StyleSheet.create({
     container:{
         flex:1,
-        backgroundColor:'white',
+        backgroundColor:'#E5D1D1',
         justifyContent:'center',
         alignItems:'center',
         // marginTop:10,
@@ -221,9 +223,13 @@ const styles = StyleSheet.create({
 
        
     },
-    boldName:{
+    name:{
         fontSize:16.5,
         fontWeight:'700',
+    },
+    email:{
+        fontWeight:'500',
+        color:'#4F4D4D',
     },
     topCircle:{
         width:500,
@@ -244,5 +250,17 @@ const styles = StyleSheet.create({
         position:'absolute',
         top:20,
         right:-100,
+    },
+    extension:{
+        backgroundColor:'white', width:'100%',
+         height:130,
+         flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'absolute', 
+        bottom: 0,
+
+        borderTopRightRadius:20,
+        borderTopLeftRadius:20,
     }
 })
