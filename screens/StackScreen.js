@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 import { selectIsFirstSignIn, selectIsSignedIn } from '../redux/reducers/authReducer';
 import LoginScreen from './AuthScreens/LoginScreen';
-import RegisterScreen from './RegisterScreen';
+import RegisterScreen from './AuthScreens/RegisterScreen';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { useNavigation } from '@react-navigation/native';
 import AccountScreen from './Account/AccountScreen';

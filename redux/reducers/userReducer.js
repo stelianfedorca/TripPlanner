@@ -13,7 +13,6 @@ import { createSlice } from "@reduxjs/toolkit";
         initialState: initialState(),
         reducers:{
             setUid: (state, action) => {
-                console.log("Action TYPE ==> ", action.type);
                 state.uid = action.payload;
             },
             
@@ -22,7 +21,6 @@ import { createSlice } from "@reduxjs/toolkit";
             },
 
             setEmail: (state, action) => {
-                console.log("Action TYPE ==> ", action.type);
                 state.email = action.payload;
             },
 

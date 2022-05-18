@@ -116,29 +116,27 @@ const GooglePlacesInput = ({navigation}) => {
               <ActivityIndicator size="large" color="#000" />
             </View>
         ): (
-          
             <>
-                <View style={styles.firstHalf}>
+
                   <View style={styles.header}>
-                      <Text style={{fontWeight:'bold', fontSize:28,}}>Plan a new trip</Text>
-                      <Text style={{fontSize:22, textAlign:'center', color:'#9C9A9A'}}>
+                      <Text style={styles.firstTitle}>Plan a new trip</Text>
+                      <Text style={styles.secondTitle}>
                         Build an itinerary and map out your upcoming travel plans
                       </Text>
                   </View>
-                  <TouchableOpacity style={styles.searchContainer} onPress={displaySearchScreen}>
-                      <Text style={{fontWeight:'bold'}}>Where to?  </Text>
-                      <Text style={{color:'#5B5B5B', fontWeight:'500'}}>{placeSearched === (undefined || '') ? 'e.g., Paris,Hawaii, Japan': placeSearched}</Text>
-                  </TouchableOpacity>
-                </View>
+                  
                   <TouchableOpacity style={styles.back} onPress={goBack}>
-                    <AntDesign name="closecircle" size={32} color="grey" />
+                    <AntDesign name="closecircle" size={36} color="#D6D6D6" />
                   </TouchableOpacity>
                 
               <View style={styles.submitButtonContainer}>
+                  <TouchableOpacity style={styles.searchContainer} onPress={displaySearchScreen}>
+                      <Text style={{fontWeight:'bold'}}>Where to?  </Text>
+                      <Text style={{color:'#5B5B5B', fontWeight:'500'}}>{placeSearched === (undefined || '') ? 'e.g., Paris, Valencia, California': placeSearched}</Text>
+                  </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.submitButton}
-                    onPress={generatePlan2}
-                    >
+                    onPress={generatePlan2}>
                     <Text style={styles.submitText}>Start planning</Text>
                 </TouchableOpacity>
               </View>
@@ -156,28 +154,22 @@ export default GooglePlacesInput
 const styles = StyleSheet.create({
     container:{
       flex:1,
-      backgroundColor:'white'
-      // borderWidth:2,
-      // borderColor:'red',
+      backgroundColor:'white',
+      justifyContent:'center',
     },
     firstHalf:{
-      flex:2,
+      flex:1,
       justifyContent:'center',
       alignItems:'center',
       justifyContent:'space-evenly',      
-      
-      // borderWidth:3,
-      // borderColor:'blue',
     },
     header:{
       flex:1,
-      // borderWidth:4,
-      // borderColor:'green',
       justifyContent:'center',
       alignItems:'center',
+      
     },
     searchContainer:{
-        
         alignItems:'flex-start',
         flexDirection:'row',
         padding:20,
@@ -191,8 +183,6 @@ const styles = StyleSheet.create({
     submitButtonContainer:{
       alignItems:'center',
       flex:2,
-      // borderWidth:3,
-      // borderColor:'purple',
     },
     submitButton:{
         width:'60%',
@@ -211,7 +201,21 @@ const styles = StyleSheet.create({
       },
       back:{
         position:'absolute',
-        left:30,
-        top:50,
+        left:25,
+        top:75,
+      },
+      firstTitle:{
+        position:'absolute',
+        bottom:150,
+        fontSize:28,
+        fontWeight:'bold' 
+      },
+      secondTitle:{
+        position:'absolute',
+        bottom:75,
+        fontSize:20,
+        textAlign:'center',
+        color:'#484545'
       }
+      
 })

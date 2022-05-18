@@ -7,10 +7,9 @@ import {
     onAuthStateChanged,
     }
      from 'firebase/auth';
-import {auth, db} from '../firebase';
+import {auth, db} from '../../firebase';
 import { setDoc, doc, getDoc, updateDoc} from 'firebase/firestore';
 import * as ImagePicker from 'expo-image-picker';
-import { useNavigation } from '@react-navigation/native';
 import {
     getDownloadURL,
     getStorage,
@@ -19,11 +18,9 @@ import {
     uploadString
 } 
 from 'firebase/storage';
-import uuid from 'uuid';
-
-import { setName, setEmail, selectFullname, selectEmail, setUid } from '../redux/reducers/userReducer';
+import { setName, setEmail, selectFullname, selectEmail, setUid } from '../../redux/reducers/userReducer';
 import { useDispatch, useSelector } from 'react-redux';
-import { setIsFirstSignIn, setIsSignedIn } from '../redux/reducers/authReducer';
+import { setIsFirstSignIn, setIsSignedIn } from '../../redux/reducers/authReducer';
 
 const RegisterScreen = ({navigation}) => {
     const [nameInput, setNameInput] = useState('');

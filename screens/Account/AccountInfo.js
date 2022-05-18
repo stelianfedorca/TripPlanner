@@ -146,20 +146,20 @@ const AccountInfo = ({photoURL}) => {
                     photoURL ? (
                         <Image source={{uri: pickImageResult.uri? pickImageResult.uri : photoURL}} style={{width:130,height:130,borderRadius:130/2}} />
                     ): (
-                        <Image source={require('../assets/icon.png')} style={{width:130,height:130,borderRadius:130/2}} />
+                        <Image source={require('../../assets/icon.png')} style={{width:130,height:130,borderRadius:130/2}} />
                     )
                 }
 
 
                 <View style={styles.logOut}>
                     <TouchableOpacity onPress={handleSignOut}>
-                        <AntDesign name="logout" size={24} color="grey"/>
+                        <AntDesign name="logout" size={24} color="black"/>
                     </TouchableOpacity>
                 </View>
 
                 <View style={{position: 'absolute', right:-2, bottom:1,}}>
-                    <TouchableOpacity onPress={chooseImage}>
-                        <MaterialCommunityIcons name="pencil-circle" size={42} color="black"/>
+                    <TouchableOpacity onPress={chooseImage} style={styles.imagePicker}>
+                        <MaterialCommunityIcons name="camera" size={36} color="#4B4B4B" />
                     </TouchableOpacity>
                 </View>
             
@@ -181,10 +181,6 @@ const styles = StyleSheet.create({
         backgroundColor:'#E5D1D1',
         justifyContent:'center',
         alignItems:'center',
-        // marginTop:10,
-        
-
-       
     },
     name:{
         fontSize:16.5,
@@ -211,8 +207,9 @@ const styles = StyleSheet.create({
 
     logOut:{
         position:'absolute',
-        top:20,
+        top:25,
         right:-100,
+
     },
     extension:{
         backgroundColor:'white', width:'100%',
@@ -225,5 +222,10 @@ const styles = StyleSheet.create({
 
         borderTopRightRadius:20,
         borderTopLeftRadius:20,
+    },
+    imagePicker:{
+        backgroundColor:'white',
+        borderRadius:20,
+        
     }
 })
