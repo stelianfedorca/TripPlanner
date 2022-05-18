@@ -8,6 +8,7 @@ import BottomSheet from 'react-native-gesture-bottom-sheet';
 import {v4 as uuidv4} from 'uuid';
 import SkeletonContent from 'react-native-skeleton-content';
 import Sheet from 'react-modal-sheet';
+import {PLACE_API_KEY} from "@env";
 
 const RecommendScreen = ({navigation}) => {
     const [attractions, setAttractions] = useState([]);
@@ -22,7 +23,6 @@ const RecommendScreen = ({navigation}) => {
     const [title, setTitle] = useState('');
 
     const place = useSelector(selectPlace);
-    const apiKey = 'AIzaSyBK5lXWrezjxCJnfSmVfukDVzivZbcNFT4';
 
 
     // the returned object will persist for the full lifetime of component
@@ -33,7 +33,7 @@ const RecommendScreen = ({navigation}) => {
     
         var config = {
         method: 'get',
-        url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${title}&key=${apiKey}`,
+        url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${title}&key=${PLACE_API_KEY}`,
         headers: { }
                 
         };
@@ -54,7 +54,7 @@ const RecommendScreen = ({navigation}) => {
           
         var config = {
           method: 'get',
-          url: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=${photoReference}&key=${apiKey}`,
+          url: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=${photoReference}&key=${PLACE_API_KEY}`,
           headers: { }
         };
   
@@ -100,7 +100,7 @@ const RecommendScreen = ({navigation}) => {
           
                 var config = {
                   method: 'get',
-                  url: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=${photoReference}&key=${apiKey}`,
+                  url: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=${photoReference}&key=${PLACE_API_KEY}`,
                   headers: { }
                 };
           
@@ -140,7 +140,7 @@ const RecommendScreen = ({navigation}) => {
     const getDataFromPlace = async () => {
         var config = {
             method: 'get',
-            url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=attractions%20in%20${place}&key=${apiKey}`,
+            url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=attractions%20in%20${place}&key=${PLACE_API_KEY}`,
             headers: { }
           };
           

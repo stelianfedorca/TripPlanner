@@ -11,6 +11,7 @@ import { collection, getDocs} from "firebase/firestore";
 import {v4 as uuidv4} from 'uuid';
 import { selectIsFirstSignIn, selectIsSignedIn } from '../redux/reducers/authReducer';
 import HomeHeader from '../components/HomeHeader';
+import {PLACE_API_KEY} from '@env';
 
 const DATA = [
     {
@@ -50,10 +51,6 @@ const HomeScreen = ({navigation}) => {
       });
     },[]);
 
-    useEffect(() => {
-      
-    },[]);
-    
 //  function for fetching all the users from db
     useEffect(() => {
       const getUsers = async () => {
@@ -63,7 +60,7 @@ const HomeScreen = ({navigation}) => {
         let tempArray = [];
 
         querySnapshot.forEach((doc) => {
-          console.log(doc.id, " ==> ", doc.data());
+          // console.log(doc.id, " ==> ", doc.data());
             // tempArray.push(
             //     {
             //         id: uuidv4(),

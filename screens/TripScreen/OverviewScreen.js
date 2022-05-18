@@ -17,7 +17,7 @@ import TopBarOverview from '../../components/TopBarOverview';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable, uploadString } from 'firebase/storage';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
-
+import {PLACE_API_KEY} from '@env';
 
 const OverviewScreen = ({navigation}) => {
     const [loading, setLoading] = useState(true);
@@ -28,7 +28,6 @@ const OverviewScreen = ({navigation}) => {
     const [photoReference, setPhotoReference] = useState('');
     
     
-    const apiKey = 'AIzaSyBK5lXWrezjxCJnfSmVfukDVzivZbcNFT4';
     
     
     // using the hook to access the redux store's state. ('place' in our case)
@@ -59,7 +58,7 @@ const OverviewScreen = ({navigation}) => {
         // console.log(data);
         var config = {
             method: 'get',
-            url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=attractions%20in%20${place}&key=${apiKey}`,
+            url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=attractions%20in%20${place}&key=${PLACE_API_KEY}`,
             headers: { }
           };
           
@@ -82,7 +81,7 @@ const OverviewScreen = ({navigation}) => {
     const callFindPlaceApiByCity = async () => {
         var config = {
             method: 'get',
-            url: `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${place}&inputtype=textquery&fields=place_id%2Cformatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry%2Cphotos&key=${apiKey}`,
+            url: `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${place}&inputtype=textquery&fields=place_id%2Cformatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry%2Cphotos&key=${PLACE_API_KEY}`,
             headers: { }
           };
           
@@ -99,7 +98,7 @@ const OverviewScreen = ({navigation}) => {
       
         var config = {
           method: 'get',
-          url: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=${photoReference}&key=${apiKey}`,
+          url: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=${photoReference}&key=${PLACE_API_KEY}`,
           headers: { }
         };
   

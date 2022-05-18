@@ -13,6 +13,7 @@ import { useDispatch } from 'react-redux';
 import { selectPlace, setPlaceId, setPlace } from '../../redux/reducers/placeReducer';
 import { ActivityIndicator, Colors } from 'react-native-paper';
 import EmptyListScreen from '../EmptyListScreen';
+import {PLACE_API_KEY} from '@env';
 
     // HOW TO FETCH PLANS' IMAGES
     // 1. get image name from every doc
@@ -29,7 +30,6 @@ const PlansScreen = ({navigation}) => {
     const uid = useSelector(selectUid);
     const isInitialMount = useRef(true);
 
-    const apiKey = 'AIzaSyBK5lXWrezjxCJnfSmVfukDVzivZbcNFT4';
     
     
     // using the hook to access the redux store's state. ('place' in our case)
@@ -58,7 +58,7 @@ const PlansScreen = ({navigation}) => {
             const getImageFromReference = async () => {
                 var config = {
                     method: 'get',
-                    url: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=${imageReference}&key=${apiKey}`,
+                    url: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=${imageReference}&key=${PLACE_API_KEY}`,
                     headers: { }
                 };
             

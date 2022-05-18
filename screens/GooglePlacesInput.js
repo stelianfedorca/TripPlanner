@@ -12,6 +12,8 @@ import { selectPlaceSearched, setPlaceSearched } from '../redux/reducers/searchR
 import { AntDesign } from '@expo/vector-icons';
 import { StackActions } from '@react-navigation/native';
 import { CommonActions } from '@react-navigation/native';
+import {PLACE_API_KEY} from "@env";
+
 const GooglePlacesInput = ({navigation}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [photoReference, setPhotoReference] = useState('');
@@ -26,7 +28,6 @@ const GooglePlacesInput = ({navigation}) => {
 
     const placeSearched = useSelector(selectPlaceSearched);
     
-    const apiKey = 'AIzaSyBK5lXWrezjxCJnfSmVfukDVzivZbcNFT4';
 
     const addTripToUser = async () => {
       const tripData = {
@@ -47,7 +48,7 @@ const GooglePlacesInput = ({navigation}) => {
     const callFindPlaceApiByCity = async () => {
       var config = {
           method: 'get',
-          url: `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${place}&inputtype=textquery&fields=place_id%2Cformatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry%2Cphotos&key=${apiKey}`,
+          url: `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${place}&inputtype=textquery&fields=place_id%2Cformatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry%2Cphotos&key=${PLACE_API_KEY}`,
           headers: { }
         };
         

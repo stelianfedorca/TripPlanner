@@ -45,15 +45,11 @@ export default HeaderCustom
 
 const styles = StyleSheet.create({
     container:{
-      // borderWidth:2,
-      // borderColor:'blue',
       height:270,
     },
     imageContainer:{
         height:200,
         overflow:'hidden',
-        // borderWidth:2,
-        // borderColor:'red',
     },
     thumbnail:{
 
@@ -61,7 +57,6 @@ const styles = StyleSheet.create({
         height:'100%',
         resizeMode:'contain',
         resizeMode:'stretch',
-        // // alignSelf:'flex-start',
     },
     backButton:{
       position:'absolute',

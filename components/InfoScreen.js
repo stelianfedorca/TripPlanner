@@ -9,10 +9,10 @@ import { db } from '../firebase';
 import { useSelector } from 'react-redux';
 import { selectUid } from '../redux/reducers/userReducer';
 import { selectPlaceId } from '../redux/reducers/placeReducer';
+import {PLACE_API_KEY} from '@env'
 
 const InfoScreen = ({route,navigation}) => {
   const {attractionSelected, photoUrl} = route.params;
-  const apiKey = 'AIzaSyBK5lXWrezjxCJnfSmVfukDVzivZbcNFT4';
   const uid = useSelector(selectUid);
   const tripId = useSelector(selectPlaceId);
 
@@ -37,7 +37,7 @@ const InfoScreen = ({route,navigation}) => {
   const callFindPlaceApiByAttractionSelected = () => {
 
     axios.get(
-      `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${attractionSelected}&inputtype=textquery&fields=place_id%2Cformatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry%2Cphotos&key=${apiKey}`
+      `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${attractionSelected}&inputtype=textquery&fields=place_id%2Cformatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry%2Cphotos&key=${PLACE_API_KEY}`
     ).then(function(response){
           setRating(response.data.candidates[0].rating);
           setPhotoReference(response.data.candidates[0].photos[0].photo_reference);
@@ -54,7 +54,7 @@ const InfoScreen = ({route,navigation}) => {
 };
 // var config = {
 //     method: 'get',
-//     url: `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${attractionSelected}&inputtype=textquery&fields=place_id%2Cformatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry%2Cphotos&key=${apiKey}`,
+//     url: `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${attractionSelected}&inputtype=textquery&fields=place_id%2Cformatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry%2Cphotos&key=${PLACE_API_KEY}`,
 //     headers: { }
 //   };
   
@@ -78,7 +78,7 @@ const InfoScreen = ({route,navigation}) => {
       
       var config = {
         method: 'get',
-        url: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${photoReference}&key=${apiKey}`,
+        url: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${photoReference}&key=${PLACE_API_KEY}`,
         headers: { }
       };
 

@@ -4,6 +4,7 @@ import { collection, getDocs, query, where, collectionGroup} from "firebase/fire
 import { useSelector } from 'react-redux';
 import { selectPlace } from '../../redux/reducers/placeReducer';
 import { db } from '../../firebase';
+import {PLACE_API_KEY} from "@env";
 
   const DATA = [
     {
@@ -34,7 +35,7 @@ const ExploreScreen = () => {
          const getImageFromReference = async () => {
              var config = {
                  method: 'get',
-                 url: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=${imageReference}&key=${apiKey}`,
+                 url: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=${imageReference}&key=${PLACE_API_KEY}`,
                  headers: { }
              };
          
