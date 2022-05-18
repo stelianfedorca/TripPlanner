@@ -2,12 +2,9 @@ import { StyleSheet, Text, View,TouchableOpacity, FlatList, Image, ActivityIndic
 import React, { useEffect, useState, useRef } from 'react'
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import { selectPlace } from '../redux/reducers/placeReducer';
+import { selectPlace } from '../../redux/reducers/placeReducer';
 import { MaterialIcons } from '@expo/vector-icons';
-import BottomSheet from 'react-native-gesture-bottom-sheet';
 import {v4 as uuidv4} from 'uuid';
-import SkeletonContent from 'react-native-skeleton-content';
-import Sheet from 'react-modal-sheet';
 import {PLACE_API_KEY} from "@env";
 
 const RecommendScreen = ({navigation}) => {

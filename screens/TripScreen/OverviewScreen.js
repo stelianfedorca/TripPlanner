@@ -12,8 +12,8 @@ import { v4 as uuidv4} from 'uuid';
 import InfoScreen from '../../components/InfoScreen';
 import RBSheet from "react-native-raw-bottom-sheet";
 import HeaderCustom from '../../screens/HeaderCustom';
-import RecommendScreen from '../RecommendScreen';
-import TopBarOverview from '../../components/TopBarOverview';
+import RecommendScreen from './RecommendScreen'
+import TopBarOverview from '../TopTabs/TopBarOverview';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable, uploadString } from 'firebase/storage';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase';

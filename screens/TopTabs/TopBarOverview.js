@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
-import GuidesScreen from '../screens/TopTabs/GuidesScreen';
-import PlansScreen from '../screens/TopTabs/PlansScreen';
-import RecommendScreen from '../screens/RecommendScreen';
-import ItineraryScreen from '../screens/TripScreen/ItineraryScreen';
-import ExploreScreen from '../screens/TripScreen/ExploreScreen';
+import GuidesScreen from './GuidesScreen';
+import PlansScreen from './PlansScreen';
+import RecommendScreen from '../TripScreen/RecommendScreen';
+import ItineraryScreen from '../TripScreen/ItineraryScreen';
+import ExploreScreen from '../TripScreen/ExploreScreen';
 
 const Tab = createMaterialTopTabNavigator();
 
