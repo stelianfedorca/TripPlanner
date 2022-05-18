@@ -33,8 +33,8 @@ const HeaderCustom = ({image}) => {
             </TouchableOpacity>
         </View>
       </View>
-      <View style={styles.floatingSection}>
-        <Text style={{fontSize:23,fontWeight:'bold',}}>Trip to {place}</Text>
+      <View style={styles.cityName}>
+        <Text style={styles.cityNameText}>{place}</Text>
       </View>
 
     </View>
@@ -45,18 +45,18 @@ export default HeaderCustom
 
 const styles = StyleSheet.create({
     container:{
-      height:270,
+      // height:270,
     },
     imageContainer:{
-        height:200,
+        height:230,
         overflow:'hidden',
+       
     },
     thumbnail:{
-
       width:'100%',
-        height:'100%',
-        resizeMode:'contain',
-        resizeMode:'stretch',
+      height:'100%',
+      resizeMode:'contain',
+      resizeMode:'stretch',
     },
     backButton:{
       position:'absolute',
@@ -65,22 +65,35 @@ const styles = StyleSheet.create({
     },
     overlay:{
       ...StyleSheet.absoluteFillObject,
-      backgroundColor: 'rgba(0,0,0,0.25)',
+      backgroundColor: 'rgba(0,0,0,0.45)',
     },
-    floatingSection:{
+    floatingTripName:{
       position:'absolute',
-      backgroundColor:'#F3F3F3',
-      opacity:0.85,
-      width:260,
+      // backgroundColor:'#F3F3F3',
+      // opacity:0.85,
+      // width:260,
       height:70,
 
       bottom:30,
-      // left:10,
+      left:10,
       alignSelf:'center',
 
-      borderRadius:10,
-      elevation:10,
+      // borderRadius:10,
+      // elevation:10,
       justifyContent:'center',
       alignItems:'center',
     },
+
+    cityName:{
+      position:'absolute',
+      bottom: 20,
+      left:25,
+
+    },
+    cityNameText:{
+      fontSize:25,
+      fontWeight:'bold',
+      color:'white',
+      letterSpacing:1,
+    }
 })

@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react';
 import {useHeaderHeight} from '@react-navigation/elements';
 import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
-import {auth, db} from '../firebase';
+import {auth, db} from '../../firebase';
 import { useDispatch } from 'react-redux';
-import { setEmail, setName, setUid } from '../redux/reducers/userReducer';
+import { setEmail, setName, setUid } from '../../redux/reducers/userReducer';
 import { collection, doc, getDoc } from 'firebase/firestore';
-import { setIsFirstSignIn, setIsSignedIn } from '../redux/reducers/authReducer';
+import { setIsFirstSignIn, setIsSignedIn } from '../../redux/reducers/authReducer';
 
 const LoginScreen = ({navigation}) => {
     // react hooks

@@ -1,21 +1,21 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity, SafeAreaView} from 'react-native';
 import React, { useEffect, useState } from 'react';
-import {auth, db} from '../firebase';
+import {auth, db} from '../../firebase';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { doc, getDoc, getDocs, collection} from 'firebase/firestore';
 import { getDownloadURL, getStream } from 'firebase/storage';
 import { useSelector } from 'react-redux';
-import { selectFullname, selectEmail } from '../redux/reducers/userReducer';
-import { selectPlace } from '../redux/reducers/placeReducer';
+import { selectFullname, selectEmail } from '../../redux/reducers/userReducer';
+import { selectPlace } from '../../redux/reducers/placeReducer';
 import { useDispatch } from 'react-redux';
-import { setPlace } from '../redux/reducers/placeReducer';
+import { setPlace } from '../../redux/reducers/placeReducer';
 
 import { getStorage, ref } from 'firebase/storage';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import PlansScreen from './TopTabs/PlansScreen';
-import GuidesScreen from './TopTabs/GuidesScreen';
-import TopBar from '../components/TopBar';
-import AccountInfo from '../components/AccountInfo';
+import PlansScreen from '../TopTabs/PlansScreen';
+import GuidesScreen from '../TopTabs/GuidesScreen';
+import TopBar from '../../components/TopBar';
+import AccountInfo from './AccountInfo';
 import { onAuthStateChanged, updateProfile } from 'firebase/auth';
 
 

@@ -3,11 +3,11 @@ import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 import { selectIsFirstSignIn, selectIsSignedIn } from '../redux/reducers/authReducer';
-import LoginScreen from './LoginScreen';
+import LoginScreen from './AuthScreens/LoginScreen';
 import RegisterScreen from './RegisterScreen';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { useNavigation } from '@react-navigation/native';
-import AccountScreen from './AccountScreen';
+import AccountScreen from './Account/AccountScreen';
 import HomeScreen from './HomeScreen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import UploadScreen from './UploadScreen';
@@ -43,7 +43,7 @@ const StackScreen = () => {
             labeled={false}
             initialRouteName='Home'
             barStyle={{ backgroundColor: 'white', height:60}}
-            activeColor='#2E7FE3'
+            activeColor='black'
             inactiveColor='#B8B6B6'
             screenOptions={{
                 tabBarShowLabel:false,
@@ -126,13 +126,6 @@ const StackScreen = () => {
                   animation:'slide_from_right'
                 }} 
                 />
-                {/* 
-                <Stack.Screen options={{headerShown:false}} name="PlaceHolder" component={BottomSheetPlaceholder}/>
-                <Stack.Screen options={{headerShown:false}} name="Account" component={AccountScreen} />
-                <Stack.Screen options={{headerShown: false}} name="AddSubcoll" component={AddSubcollectionScreen}/>
-
-                 */}
-                
               </>
             ):(
               <>

@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Image, ActivityIndicator, TouchableOpacity} from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectEmail, selectImage, selectFullname, setImage, userSignOut, selectImageUrl, selectUid, setImageUrl } from '../redux/reducers/userReducer'
+import { selectEmail, selectImage, selectFullname, setImage, userSignOut, selectImageUrl, selectUid, setImageUrl } from '../../redux/reducers/userReducer'
 
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -13,58 +13,22 @@ import { Entypo } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { resetAction } from '../redux/store';
-import { auth, db } from '../firebase';
+import { resetAction } from '../../redux/store';
+import { auth, db } from '../../firebase';
 import { onAuthStateChanged, updateProfile } from 'firebase/auth';
 import { doc, updateDoc } from 'firebase/firestore';
-import { setIsSignedIn } from '../redux/reducers/authReducer';
+import { setIsSignedIn } from '../../redux/reducers/authReducer';
 
 const AccountInfo = ({photoURL}) => {
     const uid = useSelector(selectUid);
     const name = useSelector(selectFullname);
     const email = useSelector(selectEmail);
-    const image = useSelector(selectImage); // 101
-    const imageUrl = useSelector(selectImageUrl); 
-    const [isUploadLoading, setIsUploadLoading] = useState(false);
     const [pickImageResult, setPickImageResult] = useState('');
     const [fileReference, setFileReference] = useState('');
     const [downloadedImage, setDownloadedImage] = useState('');
 
-
-
-    // when the component is mounted for the first time
-    // fetch the image from Firebase Storage
-    // and after that, everytime the component is 
-    // rendered 
-
-    const [imageFromLibrary, setImageFromLibrary] = useState('');
-
-
-    const [myImage, setMyImage] = useState('');
-
-
     const dispatch = useDispatch();
-    const navigation = useNavigation();
 
-    // const getImageFromFirebaseStorage = () => {
-    //     console.log("getImageFromFirebaseStorage, image: ", image);
-    //     const pathReference = ref(getStorage(),`userphoto/${image}`);
-    //     getDownloadURL(pathReference)
-    //         .then((url) => {
-    //             setMyImage({uri: url});
-    //         });
-    // };
-
-    // useEffect(() => {
-    //     if(image === '') {
-    //         return;
-    //     }
-        
-    //     getImageFromFirebaseStorage();
-    // },[image]);
-
-
-    
 
     const uploadImageToFirebaseStorage = async () => {
         const filename = `userphoto/${uid}`;
@@ -167,7 +131,6 @@ const AccountInfo = ({photoURL}) => {
         .then(() => {
             dispatch(resetAction());
             dispatch(setIsSignedIn(false));
-            // navigation.replace("Login");
         })  
         .catch(error => alert(error.message));
       };
@@ -190,7 +153,7 @@ const AccountInfo = ({photoURL}) => {
 
                 <View style={styles.logOut}>
                     <TouchableOpacity onPress={handleSignOut}>
-                        <AntDesign name="logout" size={24} color="black"/>
+                        <AntDesign name="logout" size={24} color="grey"/>
                     </TouchableOpacity>
                 </View>
 
