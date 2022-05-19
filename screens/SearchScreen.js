@@ -1,8 +1,5 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
-import axios from 'axios';
-import GooglePlacesInput from './GooglePlacesInput';
-import { StackActions } from '@react-navigation/native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { useDispatch } from 'react-redux';
 import { setPlaceSearched } from '../redux/reducers/searchReducer';
@@ -30,34 +27,33 @@ const SearchScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       <GooglePlacesAutocomplete
-                        ref={ref}
-                        placeholder='Where to ?'
-                        onPress={setData}
-                        query={{
-                            key:'AIzaSyBK5lXWrezjxCJnfSmVfukDVzivZbcNFT4',
-                            language:'en',
-                        }}
+        ref={ref}
+        placeholder='Where to ?'
+        onPress={setData}
+        query={{
+          key:'AIzaSyBK5lXWrezjxCJnfSmVfukDVzivZbcNFT4',
+          language:'en',
+        }}
+        styles={{
+          container: {
+          flex:2,
+          justifyContent:'flex-start',
+          alignItems:'center',
+          marginTop:50,
+        }, 
+          textInput: {
+          backgroundColor: '#E8E8E8',
+          height: 44,
+          borderRadius: 10,
+          paddingVertical: 5,
+          paddingHorizontal: 10,
+          marginHorizontal:15,
+          fontSize: 15,
+          flex: 1,
+        },
                         
-                        styles={{
-                          container: {
-                          flex:2,
-                          justifyContent:'flex-start',
-                          alignItems:'center',
-                          marginTop:50,
-                        }, 
-                        textInput: {
-                          backgroundColor: '#E8E8E8',
-                          height: 44,
-                          borderRadius: 10,
-                          paddingVertical: 5,
-                          paddingHorizontal: 10,
-                          marginHorizontal:15,
-                          fontSize: 15,
-                          flex: 1,
-                        },
-                        
-                        }}
-                />  
+        }}
+        />  
     </View>
   );
 };

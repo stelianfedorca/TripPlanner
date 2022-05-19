@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View, SafeAreaView} from 'react-native'
 import React from 'react'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
-import GuidesScreen from '../screens/TopTabs/GuidesScreen';
-import PlansScreen from '../screens/TopTabs/PlansScreen';
+import GuidesScreen from '../TopTabs/GuidesScreen';
+import PlansScreen from '../TopTabs/PlansScreen';
 
 const Tab = createMaterialTopTabNavigator();
 

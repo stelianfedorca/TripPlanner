@@ -10,7 +10,6 @@ import { selectImage, setImage } from '../redux/reducers/userReducer';
 import { collection, getDocs} from "firebase/firestore";
 import {v4 as uuidv4} from 'uuid';
 import { selectIsFirstSignIn, selectIsSignedIn } from '../redux/reducers/authReducer';
-import HomeHeader from '../components/HomeHeader';
 import {PLACE_API_KEY} from '@env';
 
 const DATA = [

@@ -14,7 +14,7 @@ import { getStorage, ref } from 'firebase/storage';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import PlansScreen from '../TopTabs/PlansScreen';
 import GuidesScreen from '../TopTabs/GuidesScreen';
-import TopBar from '../../components/TopBar';
+import TopBar from './TopBar';
 import AccountInfo from './AccountInfo';
 import { onAuthStateChanged, updateProfile } from 'firebase/auth';
 

@@ -2,22 +2,16 @@ import { StyleSheet, Text, View, Image, ActivityIndicator, TouchableOpacity} fro
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectEmail, selectImage, selectFullname, setImage, userSignOut, selectImageUrl, selectUid, setImageUrl } from '../../redux/reducers/userReducer'
-
-import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-
 import * as ImagePicker from 'expo-image-picker';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
-
-import { Entypo } from '@expo/vector-icons';
-import { MaterialIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 import { resetAction } from '../../redux/store';
 import { auth, db } from '../../firebase';
 import { onAuthStateChanged, updateProfile } from 'firebase/auth';
 import { doc, updateDoc } from 'firebase/firestore';
 import { setIsSignedIn } from '../../redux/reducers/authReducer';
+import { IconButton, Colors } from 'react-native-paper';
 
 const AccountInfo = ({photoURL}) => {
     const uid = useSelector(selectUid);
@@ -157,10 +151,14 @@ const AccountInfo = ({photoURL}) => {
                     </TouchableOpacity>
                 </View>
 
-                <View style={{position: 'absolute', right:-2, bottom:1,}}>
-                    <TouchableOpacity onPress={chooseImage} style={styles.imagePicker}>
-                        <MaterialCommunityIcons name="camera" size={36} color="#4B4B4B" />
-                    </TouchableOpacity>
+                <View style={{position: 'absolute', left:85, top:85,}}>
+                    <IconButton
+                        icon="camera"
+                        color={Colors.grey900}
+                        size={26}
+                        onPress={() => console.log('Pressed')}
+                        style={styles.imagePicker}
+                    />
                 </View>
             
             </View>
@@ -225,7 +223,7 @@ const styles = StyleSheet.create({
     },
     imagePicker:{
         backgroundColor:'white',
-        borderRadius:20,
-        
+        // opacity:0.85,
+        borderRadius:50,
     }
 })

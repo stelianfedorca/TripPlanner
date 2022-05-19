@@ -7,7 +7,6 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { selectEmail, selectUid } from '../../redux/reducers/userReducer';
 import {v4 as uuidv4} from 'uuid';
-import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 import { selectIsNewTripAdded, setIsNewTripAdded } from '../../redux/reducers/tripReducer';
 import { useDispatch } from 'react-redux';
 import { selectPlace, setPlaceId, setPlace } from '../../redux/reducers/placeReducer';
@@ -31,26 +30,6 @@ const PlansScreen = ({navigation}) => {
     const isInitialMount = useRef(true);
 
     
-    
-    // using the hook to access the redux store's state. ('place' in our case)
-    // const place = useSelector(selectPlace);
-    const useTripImages = (imageName) => {
-       const [imageUrl, setImageUrl] = useState('');
-       const storage = getStorage();
-
-       useEffect(() => {
-           const fetchImage = async () => {
-               const pathReference = ref(storage,`trip_images/${imageName}`);
-               const uri = await getDownloadURL(pathReference);
-               setImageUrl({uri: uri});
-           }
-
-           fetchImage();
-       },[imageName]);
-
-       return imageUrl.uri;
-   }
-
    // custom hook
    const useGetImage = (imageReference) => {
        const [image, setImage] = useState("");
@@ -83,23 +62,17 @@ const PlansScreen = ({navigation}) => {
 
         const url = useGetImage(imageReference);
 
-        const goToOverviewScreen = async () => {
+        const displayOverviewScreen = async () => {
             dispatch(setPlace(place));
             dispatch(setPlaceId(docId));
             navigation.navigate('Overview');
         };
         
         return (
-            <TouchableOpacity style={styles.item} onPress={goToOverviewScreen}>
+            <TouchableOpacity style={styles.item} onPress={displayOverviewScreen}>
                 <Image source={{uri: url}}
-                style={{width:100, height:100, borderRadius:8,justifyContent:'center',
-                alignSelf:'center'}}
+                style={styles.image}
                  />
-                {/* <Image 
-                source={require('../../assets/paris2.jpg')}
-                style={{width:100, height:100, borderRadius:8,justifyContent:'center',
-                alignSelf:'center'}}
-                /> */}
                 <Text 
                 style={{fontSize:17, marginStart:15,textAlignVertical:'center'}}>
                 {title}
@@ -121,15 +94,15 @@ const PlansScreen = ({navigation}) => {
             setIsQueryEmpty(true);
         }
         querySnapshot.forEach((doc) => {
-                    tempArray.push(
-                           {
-                           id: uuidv4(),
-                           title: doc.data().title,
-                           image: doc.data().image,
-                           place: doc.data().place,
-                           imageReference: doc.data().imageReference,
-                           docId: doc.id
-                       }
+            tempArray.push(
+                {
+                    id: uuidv4(),
+                    title: doc.data().title,
+                    image: doc.data().image,
+                    place: doc.data().place,
+                    imageReference: doc.data().imageReference,
+                    docId: doc.id
+                }
             );
         });
         setTripPlans(tempArray);
@@ -148,28 +121,6 @@ const PlansScreen = ({navigation}) => {
         
         return dispatch(setIsNewTripAdded(false));
     });
-
-    // useEffect(() => {
-    //     if(isFocused) {
-    //         console.log("getPlans() is called...");
-    //         getPlans();
-    //     }else{
-    //         return ;
-    //     }
-    // },[isFocused]);
-
-    // useEffect(() => {
-    //     // if(isNewTripAdded === false) return ;
-
-    //     console.log("getPlans() 2 is called...");
-    //     getPlans();
-
-    //     // clean up function
-    //     return () => {
-    //         // cancel the subscription 
-    //         dispatch(setIsNewTripAdded(false));
-    //     }
-    // },[isNewTripAdded]);
 
     useEffect(() => {
         if(tripPlans.length === 0) {
@@ -215,18 +166,23 @@ const styles = StyleSheet.create({
         backgroundColor:'white',
     },
     item:{
-        padding:20,
+        // padding:20,
         backgroundColor:'white',
         
-        height:130,
+        height:120,
         flexDirection:'row',
-        // justifyContent:'space-around',
-        // justifyContent:'center',
-        
     },
     separator:{
         // backgroundColor:'red',
         borderWidth:1,
         borderColor:'#D2D2D2',
+    },
+    image:{
+        width:100,
+        height:100,
+        margin:3,
+        borderRadius:5,
+        justifyContent:'center',
+        alignSelf:'center'
     }
 })

@@ -5,10 +5,10 @@ import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { ActivityIndicator } from 'react-native-paper';
 import { addDoc, collection } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db } from '../../firebase';
 import { useSelector } from 'react-redux';
-import { selectUid } from '../redux/reducers/userReducer';
-import { selectPlaceId } from '../redux/reducers/placeReducer';
+import { selectUid } from '../../redux/reducers/userReducer';
+import { selectPlaceId } from '../../redux/reducers/placeReducer';
 import {PLACE_API_KEY} from '@env'
 
 const InfoScreen = ({route,navigation}) => {
@@ -22,10 +22,6 @@ const InfoScreen = ({route,navigation}) => {
 
   const [placeId, setPlaceId] = useState('');
   const [photoReference, setPhotoReference] = useState('');
-
-  useEffect(() => {
-    console.log(tripId);
-  },[]);
 
   const setLoadingAfterTimeOut = async () => {
     setTimeout(() => {
@@ -52,67 +48,7 @@ const InfoScreen = ({route,navigation}) => {
       console.log(error);
   });
 };
-// var config = {
-//     method: 'get',
-//     url: `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${attractionSelected}&inputtype=textquery&fields=place_id%2Cformatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry%2Cphotos&key=${PLACE_API_KEY}`,
-//     headers: { }
-//   };
-  
-//     axios(config)
-//     .then(function (response) {
-//       console.log(response.data);
-//       setRating(response.data.candidates[0].rating);
-//       setPhotoReference(response.data.candidates[0].photos[0].photo_reference);
-//       setPlaceId(response.data.candidates[0].place_id);
-      
-//       console.log("The rating is: " + rating);
-//       console.log("The photo reference is: " + photoReference);
-//       console.log("The place id is: " + placeId);
-      
-//     })
-//     .catch(function (error) {
-//       console.log(error);
-//   });
-    
-    const getPhoto = () => {
-      
-      var config = {
-        method: 'get',
-        url: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${photoReference}&key=${PLACE_API_KEY}`,
-        headers: { }
-      };
 
-      var axios = require('axios');
-
-      axios(config)
-      .then(function (response) {
-        // setLoadingAfterTimeOut();
-        setImageSource({url: response.request.responseURL});
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-      
-  };
-
-  // useEffect(() => {
-  //   if(attractionSelected === '') return ;
-  //   callFindPlaceApiByAttractionSelected();
-  // },[attractionSelected]);
-
-  
-  // useEffect(() => {
-  //   if(photoReference === '') return ;
-
-  //   getPhoto();
-    
-  // },[photoReference]);
-
-  // useEffect(() => {
-  //   if(imageSource.url === undefined) return ;
-
-  //   setLoading(false);
-  // },[imageSource])
 
   const addToTrip = async () => {
     const attractionData = {

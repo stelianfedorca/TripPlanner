@@ -1,13 +1,12 @@
 import { Image, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react';
-import {Header} from '@react-navigation/elements'
-import { ScreenStackHeaderLeftView } from 'react-native-screens';
 import  Icon from 'react-native-vector-icons/FontAwesome';
+import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectPlace } from '../redux/reducers/placeReducer';
-import { setIsNewTripAdded } from '../redux/reducers/tripReducer';
+import { selectPlace } from '../../redux/reducers/placeReducer';
+import { setIsNewTripAdded } from '../../redux/reducers/tripReducer';
 const HeaderCustom = ({image}) => {
   const navigation = useNavigation();
 
@@ -21,7 +20,6 @@ const HeaderCustom = ({image}) => {
 
   return (
     <View style={styles.container}>
-
       <View style={styles.imageContainer}>
         <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
           <Image source={{uri: image}} style={styles.thumbnail}/>
@@ -29,7 +27,8 @@ const HeaderCustom = ({image}) => {
         </View>
         <View style={styles.backButton}>
             <TouchableOpacity onPress={navigateToHomeScreen}>
-                <Icon name={'home'} color={'white'} size={26}/>
+                {/* <Icon name={'home'} color={'white'} size={26}/> */}
+                <Ionicons name="ios-chevron-back-circle" size={40} color="white" />
             </TouchableOpacity>
         </View>
       </View>
@@ -45,7 +44,6 @@ export default HeaderCustom
 
 const styles = StyleSheet.create({
     container:{
-      // height:270,
     },
     imageContainer:{
         height:230,
@@ -93,7 +91,7 @@ const styles = StyleSheet.create({
     cityNameText:{
       fontSize:25,
       fontWeight:'bold',
-      color:'white',
+      color:'#FFFFFF',
       letterSpacing:1,
     }
 })

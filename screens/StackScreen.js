@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, Image} from 'react-native'
 import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
@@ -14,17 +14,14 @@ import UploadScreen from './UploadScreen';
 import GooglePlacesInput from './GooglePlacesInput';
 import SearchScreen from './SearchScreen';
 import OverviewScreen from './TripScreen/OverviewScreen';
-import InfoScreen from '../components/InfoScreen';
+import InfoScreen from './TripScreen/PlaceDetailsScreen';
 import { selectImageUrl } from '../redux/reducers/userReducer';
 
 const StackScreen = () => {
     const Stack = createNativeStackNavigator();
     const isSignedIn = useSelector(selectIsSignedIn);
     const isFirstSignIn = useSelector(selectIsFirstSignIn);
-    const navigation = useNavigation();
-
-    const userImage = useSelector(selectImageUrl);
-
+   
     const EmptyScreen = ({navigation}) => {
         useEffect(() => { 
           navigation.navigate('Google');
@@ -95,7 +92,8 @@ const StackScreen = () => {
         </Tab.Navigator>
           )
     };
-        
+
+   
 
   return (
     <Stack.Navigator>
@@ -123,7 +121,8 @@ const StackScreen = () => {
                 name="Info" 
                 component={InfoScreen}
                 options={{
-                  animation:'slide_from_right'
+                  animation:'slide_from_right',
+                  headerShown:false,
                 }} 
                 />
               </>

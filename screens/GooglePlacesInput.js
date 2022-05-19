@@ -1,6 +1,5 @@
 import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator} from 'react-native'
 import React, { useState, useEffect} from 'react'
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import axios from 'axios';
 import { setPlace, selectPlace} from '../redux/reducers/placeReducer';
 import { selectEmail, selectUid} from '../redux/reducers/userReducer';
@@ -10,8 +9,6 @@ import {auth, db} from '../firebase';
 import { selectIsNewTripAdded, setIsNewTripAdded } from '../redux/reducers/tripReducer';
 import { selectPlaceSearched, setPlaceSearched } from '../redux/reducers/searchReducer';
 import { AntDesign } from '@expo/vector-icons';
-import { StackActions } from '@react-navigation/native';
-import { CommonActions } from '@react-navigation/native';
 import {PLACE_API_KEY} from "@env";
 
 const GooglePlacesInput = ({navigation}) => {
@@ -23,7 +20,6 @@ const GooglePlacesInput = ({navigation}) => {
 
     const place = useSelector(selectPlace); 
     const uid = useSelector(selectUid);
-    const isNewTripAdded = useSelector(selectIsNewTripAdded);
 
 
     const placeSearched = useSelector(selectPlaceSearched);
@@ -61,14 +57,9 @@ const GooglePlacesInput = ({navigation}) => {
         });
   };
 
-  const generatePlan2 = async () => {
+  const generatePlan = async () => {
     dispatch(setPlace(placeSearched));
 }
-
-
-    const generatePlan = async () => {
-        dispatch(setPlace(placeSearched));
-    }
 
 
     const goBack = () => {
@@ -106,6 +97,10 @@ const GooglePlacesInput = ({navigation}) => {
       navigation.navigate('Search');
     }
 
+    const displayCalendar = () => {
+     
+    }
+
   
 
   return (
@@ -129,14 +124,29 @@ const GooglePlacesInput = ({navigation}) => {
                     <AntDesign name="closecircle" size={36} color="#D6D6D6" />
                   </TouchableOpacity>
                 
-              <View style={styles.submitButtonContainer}>
+              <View style={styles.submitContainer}>
+
                   <TouchableOpacity style={styles.searchContainer} onPress={displaySearchScreen}>
                       <Text style={{fontWeight:'bold'}}>Where to?  </Text>
                       <Text style={{color:'#5B5B5B', fontWeight:'500'}}>{placeSearched === (undefined || '') ? 'e.g., Paris, Valencia, California': placeSearched}</Text>
                   </TouchableOpacity>
+
+                  <TouchableOpacity style={styles.calendarContainer} onPress={displayCalendar}>
+                      <Text style={{color:'black', fontWeight:'bold', marginRight:15,}}>Dates</Text>
+                      <Text style={{color:'#5B5B5B', fontWeight:'500', marginRight:15,}}>
+                      <AntDesign name="calendar" size={20} color="#5B5B5B"/>
+                      Start date
+                      </Text>
+
+                      <Text style={{color:'#5B5B5B', fontWeight:'500'}}>
+                      <AntDesign name="calendar" size={20} color="#5B5B5B" />
+                      End date
+                      </Text>
+                  </TouchableOpacity>
+
                 <TouchableOpacity
                     style={styles.submitButton}
-                    onPress={generatePlan2}>
+                    onPress={generatePlan}>
                     <Text style={styles.submitText}>Start planning</Text>
                 </TouchableOpacity>
               </View>
@@ -180,7 +190,18 @@ const styles = StyleSheet.create({
         borderColor:'grey'
 
     },
-    submitButtonContainer:{
+    calendarContainer:{
+      alignItems:'center',
+      flexDirection:'row',
+      padding:20,
+      paddingLeft:10,
+      width:'85%',
+      borderRadius:10,
+      borderWidth:0.5,
+      borderColor:'grey',
+      marginTop:15,
+  },
+    submitContainer:{
       alignItems:'center',
       flex:2,
     },
