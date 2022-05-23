@@ -156,7 +156,7 @@ const AccountInfo = ({photoURL}) => {
                         icon="camera"
                         color={Colors.grey900}
                         size={26}
-                        onPress={() => console.log('Pressed')}
+                        onPress={chooseImage}
                         style={styles.imagePicker}
                     />
                 </View>

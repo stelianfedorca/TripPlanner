@@ -6,23 +6,23 @@ const ItineraryScreen = () => {
   const date = [
     {
       id: 1,
-      day: "Thu, May 5th",
+      day: "Fri, May 20th",
     },
     {
       id: 2,
-      day: "Fri, May 6th",
+      day: "Sat, May 21st",
     },
     {
       id:3,
-      day: "Sat, May 7th"
+      day: "Sun, May 22th"
     },
     {
       id:4,
-      day: "Sun, May 8th",
+      day: "Mon, May 23th",
     },
     {
       id:5,
-      day: "Mon, May 9th"
+      day: "Tue, May 24th"
     }
   
   ];

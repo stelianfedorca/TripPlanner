@@ -9,8 +9,9 @@ import { onAuthStateChanged, updateProfile } from 'firebase/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUid, setImageUrl } from '../redux/reducers/userReducer';
 import { setIsFirstSignIn } from '../redux/reducers/authReducer';
-
-
+import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
+import { Colors, IconButton } from 'react-native-paper';
 const UploadScreen = ({navigation}) => {
     const [image, setImage] = useState('');
     // const [email, setEmail] = useState('');
@@ -85,29 +86,7 @@ const UploadScreen = ({navigation}) => {
     return await getDownloadURL(fileRef);
     };
 
-    const chooseImage = async () => {
-        const requestResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-        if(requestResult.granted === false){
-            alert("Permision to access camera roll is required");
-            return ;
-        }
-
-        // permission granted
-        let pickerResult = await ImagePicker.launchImageLibraryAsync();
-
-        if(pickerResult === true){
-            return ;
-        }
-
-        // upload the image to firebase storage
-        const uploadUrl = await uploadImageToFirebase(pickerResult.uri);
-
-        // // add the image name to current user
-        // await updateUserWithPhoto();
-
-        setImage({url: uploadUrl});
-    };
+ 
 
     const updateUserWithPhoto2 = async () => {
         const docRef = doc(db,'users',email)
@@ -155,7 +134,7 @@ const UploadScreen = ({navigation}) => {
         
     };
 
-    const chooseImage2 = async () => {
+    const chooseImage = async () => {
         const requestResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
         if(requestResult.granted === false){
@@ -222,7 +201,7 @@ const UploadScreen = ({navigation}) => {
                 dispatch(setImageUrl(downloadedImage));
                 
             } else {
-                console.log("The user is not logged in");
+                return;
             }
         });
 
@@ -259,17 +238,32 @@ const UploadScreen = ({navigation}) => {
 
   return (
     <View style={styles.container}>
+        <View style={{justifyContent:'center', alignItems:'center'}}>
+            <Text style={{fontWeight:'bold', fontSize:26}}>Finish setting up the account</Text>
+            <Text style={{fontWeight:'bold',fontSize:22, color:'grey'}}>Choose a photo</Text>
+        </View>
 
-        <TouchableOpacity 
-        style={{marginBottom:15,backgroundColor:'purple', padding:10,}}
-        onPress={chooseImage2}
-        >
-            <Text style={{fontWeight:'700', color:'white'}}>Choose Image</Text>
-        </TouchableOpacity>
-
-
-        <View style={{flexDirection:'row', justifyContent:'space-between'}}> 
-            <Image style={[styles.thumbnail]} source={{uri: image.url}}/>
+        <View style={{flexDirection:'row'}}>
+        {
+            image.url ? (
+                <>
+                <Image style={[styles.thumbnail]} source={{uri: image.url}}/>
+                <IconButton
+                        icon="camera"
+                        color={Colors.black}
+                        size={40}
+                        onPress={chooseImage}
+                        style={styles.chooseImage}
+                    />
+                </>
+            ): (
+                <>
+                <TouchableOpacity onPress={chooseImage}>
+                    <Ionicons name="md-add-circle-sharp" size={100} color="grey" />
+                </TouchableOpacity>
+                </>
+            )
+        } 
         </View> 
         
         <View style={{marginTop:20,justifyContent:'center',alignItems:'center', width:'60%'}}>
@@ -292,17 +286,28 @@ export default UploadScreen;
 const styles = StyleSheet.create({
     container:{
         flex:1,
-        justifyContent:'center',
+        justifyContent:'space-evenly',
         alignItems:'center',
         backgroundColor:'white',
+      
     },
     thumbnail:{
-        width:300,
-        height:300,
-        borderRadius:400,
-        // resizeMode:'contain',
-        // overflow:'hidden',
-        // borderColor:'red',
-        // borderWidth:2,
+        width:200,
+        height:200,
+        borderRadius:250,
+        
+       
     },
+    chooseImgBtn:{
+        marginBottom:15,
+        backgroundColor:'purple', 
+        padding:10,
+        borderRadius:10,
+    },
+    chooseImage:{
+        position:'absolute',
+        bottom:1,
+        right:4,
+        backgroundColor:'white',
+    }
 });

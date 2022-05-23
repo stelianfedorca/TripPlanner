@@ -14,9 +14,9 @@ import UploadScreen from './UploadScreen';
 import GooglePlacesInput from './GooglePlacesInput';
 import SearchScreen from './SearchScreen';
 import OverviewScreen from './TripScreen/OverviewScreen';
-import InfoScreen from './TripScreen/PlaceDetailsScreen';
+import PlaceDetailsScreen from './TripScreen/PlaceDetailsScreen';
 import { selectImageUrl } from '../redux/reducers/userReducer';
-
+import { Ionicons } from '@expo/vector-icons';
 const StackScreen = () => {
     const Stack = createNativeStackNavigator();
     const isSignedIn = useSelector(selectIsSignedIn);
@@ -53,6 +53,7 @@ const StackScreen = () => {
               tabBarIcon: ({color}) => (
                 <Icon name={'home'} color={color} size={26}/>
             ),
+            headerShown:false,
             animation:'slide_from_right'
             }}
             name='Home' component={HomeScreen}
@@ -119,7 +120,7 @@ const StackScreen = () => {
                 <Stack.Screen options={{headerShown:false, animation:'slide_from_right'}} name="Overview" component={OverviewScreen}/>
                 <Stack.Screen 
                 name="Info" 
-                component={InfoScreen}
+                component={PlaceDetailsScreen}
                 options={{
                   animation:'slide_from_right',
                   headerShown:false,

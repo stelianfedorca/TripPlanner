@@ -44,7 +44,7 @@ const LoginScreen = ({navigation}) => {
                 dispatch(setIsSignedIn(true));
 
             } else {
-                console.log("The user is not logged in");
+                return;
             }   
 
             return () => unsubscribe(); // unsubscribing from the listener when the component is unmounting.

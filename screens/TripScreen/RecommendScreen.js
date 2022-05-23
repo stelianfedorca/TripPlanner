@@ -115,7 +115,6 @@ const RecommendScreen = ({navigation}) => {
                 <TouchableOpacity style={styles.item} onPress={() => onClick(title,image.url)}>
                     <Image source={{uri: image.url}} style={styles.imageItem}/>
                     <Text style={styles.itemTitle}>{title}</Text>
-                    {/* <MaterialIcons name="arrow-forward-ios" size={20} color="black" style={{alignSelf:'flex-end',flexShrink:2}}/> */}
                 </TouchableOpacity>
             );
         };

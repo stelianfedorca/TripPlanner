@@ -27,8 +27,7 @@ const HeaderCustom = ({image}) => {
         </View>
         <View style={styles.backButton}>
             <TouchableOpacity onPress={navigateToHomeScreen}>
-                {/* <Icon name={'home'} color={'white'} size={26}/> */}
-                <Ionicons name="ios-chevron-back-circle" size={40} color="white" />
+                <Ionicons name="ios-chevron-back-circle" size={50} color="white" />
             </TouchableOpacity>
         </View>
       </View>

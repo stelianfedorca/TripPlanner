@@ -1,20 +1,26 @@
 import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator} from 'react-native'
 import React, { useState, useEffect} from 'react'
 import axios from 'axios';
-import { setPlace, selectPlace} from '../redux/reducers/placeReducer';
+import { setPlace, selectPlace, setPlaceId} from '../redux/reducers/placeReducer';
 import { selectEmail, selectUid} from '../redux/reducers/userReducer';
 import { useDispatch, useSelector } from 'react-redux';
 import {doc, getDoc, updateDoc, collection, setDoc, addDoc} from 'firebase/firestore';
 import {auth, db} from '../firebase';
-import { selectIsNewTripAdded, setIsNewTripAdded } from '../redux/reducers/tripReducer';
+import { selectIsNewTripAdded, setIsNewTripAdded, setStartDate, setEndDate} from '../redux/reducers/tripReducer';
 import { selectPlaceSearched, setPlaceSearched } from '../redux/reducers/searchReducer';
 import { AntDesign } from '@expo/vector-icons';
 import {PLACE_API_KEY} from "@env";
+import CalendarPicker from 'react-native-calendar-picker';
 
 const GooglePlacesInput = ({navigation}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [photoReference, setPhotoReference] = useState('');
     const [isNewTrip, setIsNewTrip] = useState(false);
+    const [startDate, selectStartDate] = useState("");
+    const [endDate, selectEndDate] = useState("");
+    const [openCalendar, setOpenCalendar] = useState(false);
+    const minDate = new Date();
+    const maxDate = new Date(2023, 6, 3);
 
     const dispatch = useDispatch();
 
@@ -38,7 +44,8 @@ const GooglePlacesInput = ({navigation}) => {
       const subCollRef = collection(db,`users/${uid}/trip_plans`);
 
       // add the doc inside the subcollection
-      addDoc(subCollRef, tripData);
+      const docRef = await addDoc(subCollRef, tripData);
+      dispatch(setPlaceId(docRef.id));
     };
 
     const callFindPlaceApiByCity = async () => {
@@ -58,6 +65,7 @@ const GooglePlacesInput = ({navigation}) => {
   };
 
   const generatePlan = async () => {
+    console.log()
     dispatch(setPlace(placeSearched));
 }
 
@@ -98,7 +106,32 @@ const GooglePlacesInput = ({navigation}) => {
     }
 
     const displayCalendar = () => {
-     
+      setOpenCalendar(true);
+    }
+
+    const onDateChange = (date, type) => {
+      if(type === 'END_DATE'){
+        selectEndDate(date);
+      } else {
+        selectStartDate(date);
+        selectEndDate("");
+      }
+    }
+
+    useEffect(() => {
+      if(startDate){
+        dispatch(setStartDate(startDate));
+      }
+    },[startDate]);
+
+    useEffect(() => {
+      if(endDate){
+        dispatch(setEndDate(endDate));
+      }
+    },[endDate])
+
+    const saveDate = () => {
+      setOpenCalendar(false);
     }
 
   
@@ -106,9 +139,21 @@ const GooglePlacesInput = ({navigation}) => {
   return (
       <View style={styles.container}>
       {
-        isLoading ? (
-            <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
-              <ActivityIndicator size="large" color="#000" />
+        openCalendar ? (
+            <View style={styles.calendar}>
+              <CalendarPicker
+                startFromMonday={true}
+                allowRangeSelection={true}
+                minDate={minDate}
+                maxDate={maxDate}
+                todayBackgroundColor="#f2e6ff"
+                selectedDayColor="#7300e6"
+                selectedDayTextColor="#FFFFFF"
+                onDateChange={onDateChange}
+              />
+              <TouchableOpacity style={styles.saveDate} onPress={saveDate}>
+                <Text style={{color:'white'}}>Save</Text>
+              </TouchableOpacity>
             </View>
         ): (
             <>
@@ -128,19 +173,31 @@ const GooglePlacesInput = ({navigation}) => {
 
                   <TouchableOpacity style={styles.searchContainer} onPress={displaySearchScreen}>
                       <Text style={{fontWeight:'bold'}}>Where to?  </Text>
-                      <Text style={{color:'#5B5B5B', fontWeight:'500'}}>{placeSearched === (undefined || '') ? 'e.g., Paris, Valencia, California': placeSearched}</Text>
+                      <Text style={{color:'#464545', fontWeight:'500'}}>{placeSearched === (undefined || '') ? 'e.g., Paris, Valencia, California': placeSearched}</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity style={styles.calendarContainer} onPress={displayCalendar}>
                       <Text style={{color:'black', fontWeight:'bold', marginRight:15,}}>Dates</Text>
-                      <Text style={{color:'#5B5B5B', fontWeight:'500', marginRight:15,}}>
-                      <AntDesign name="calendar" size={20} color="#5B5B5B"/>
-                      Start date
+                      <Text style={{color:'#464545', fontWeight:'500', marginRight:15,}}>
+                      {
+                        startDate ? (`${startDate.toString().split(' ')[1]} ${startDate.toString().split(' ')[2]}`):(
+                          <>
+                          <AntDesign name="calendar" size={20} color="#5B5B5B"/> 
+                          <Text>Start date</Text>
+                          </>
+                        ) 
+                      }
                       </Text>
 
-                      <Text style={{color:'#5B5B5B', fontWeight:'500'}}>
-                      <AntDesign name="calendar" size={20} color="#5B5B5B" />
-                      End date
+                      <Text style={{color:'#464545', fontWeight:'500'}}>
+                      {
+                        startDate ? (`${endDate.toString().split(' ')[1]} ${endDate.toString().split(' ')[2]}`):(
+                          <>
+                          <AntDesign name="calendar" size={20} color="#5B5B5B"/> 
+                          <Text>End date</Text>
+                          </>
+                        ) 
+                      }
                       </Text>
                   </TouchableOpacity>
 
@@ -237,6 +294,18 @@ const styles = StyleSheet.create({
         fontSize:20,
         textAlign:'center',
         color:'#484545'
+      },
+      calendar:{
+        flex:1, 
+        justifyContent:'center', 
+        alignItems:'center', 
+        backgroundColor:'white'
+      },
+      saveDate:{
+        backgroundColor:'purple',
+        borderRadius:15,
+        padding:10,
+        paddingHorizontal:30,
       }
       
 })

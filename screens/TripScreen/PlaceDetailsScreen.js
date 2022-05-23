@@ -10,8 +10,9 @@ import { useSelector } from 'react-redux';
 import { selectUid } from '../../redux/reducers/userReducer';
 import { selectPlaceId } from '../../redux/reducers/placeReducer';
 import {PLACE_API_KEY} from '@env'
+import { Ionicons } from '@expo/vector-icons';
 
-const InfoScreen = ({route,navigation}) => {
+const PlaceDetailsScreen = ({route,navigation}) => {
   const {attractionSelected, photoUrl} = route.params;
   const uid = useSelector(selectUid);
   const tripId = useSelector(selectPlaceId);
@@ -23,25 +24,28 @@ const InfoScreen = ({route,navigation}) => {
   const [placeId, setPlaceId] = useState('');
   const [photoReference, setPhotoReference] = useState('');
 
-  const setLoadingAfterTimeOut = async () => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 400);
-  }
+  useEffect(() => {
+    navigation.setOptions({title: attractionSelected});
+  },[]);
 
+  useEffect(() => {
+    callFindPlaceApiByAttractionSelected();
+  },[]);
+
+  useEffect(() => {
+    if(rating) {
+      console.log("The rating is: " + rating);
+    }
+  },[rating]);
+ 
   // get info from place api using an tourist attraction
   const callFindPlaceApiByAttractionSelected = () => {
 
     axios.get(
       `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${attractionSelected}&inputtype=textquery&fields=place_id%2Cformatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry%2Cphotos&key=${PLACE_API_KEY}`
     ).then(function(response){
-          setRating(response.data.candidates[0].rating);
-          setPhotoReference(response.data.candidates[0].photos[0].photo_reference);
-          setPlaceId(response.data.candidates[0].place_id);
+          console.log(response);
           
-          // console.log("The rating is: " + rating);
-          // console.log("The photo reference is: " + photoReference);
-          // console.log("The place id is: " + placeId);
           
     })
     .catch(function (error) {
@@ -58,38 +62,68 @@ const InfoScreen = ({route,navigation}) => {
 
     // get the reference to subcollection
     // if it's not created yet, create it
-    const subCollRef = collection(db,`users/${uid}/trip_plans/${tripId}/itinerary/`);
+    const subCollRef = collection(db,`users/${uid}/trip_plans/${tripId}/itinerary`);
 
     // add the doc inside the subcollection
     addDoc(subCollRef, attractionData);
+  };
+
+  const goBack = () => {
+    navigation.goBack();
   }
 
 
 
   return (
         <View style={styles.container}>
+
+          <View style={styles.header}>
             <Image source={{uri: photoUrl}} style={styles.thumbnail}/>
+            <View style={styles.overlay}/>
+          </View>
+
+          <TouchableOpacity style={styles.backButton} onPress={goBack}>
+                <Ionicons name="ios-chevron-back-circle" size={50} color="white" style={{opacity:0.75}}/>
+          </TouchableOpacity>
+
+          <Text style={styles.title}>{attractionSelected}</Text>
+
             <TouchableOpacity style={styles.addToTrip} onPress={addToTrip}>
-              <Text style={styles.addToTripText}>Add to trip</Text>
+              <Text style={styles.addToTripText}>Add to itinerary</Text>
             </TouchableOpacity>
         </View>
 
   )
 }
 
-export default InfoScreen
+export default PlaceDetailsScreen
 
 const styles = StyleSheet.create({
   container: {
       flex:1,
-      justifyContent:'center',
+      justifyContent:'flex-start',
       alignItems:'center',
       backgroundColor:'white',
   },
+  header:{
+    marginBottom:5,
+    width:'100%',
+    
+    // shadowRadius:10,
+  },
   thumbnail:{
-    width:200,
-    height:200,
-    resizeMode:'contain',
+    width:'100%',
+    height:300,
+    resizeMode:'stretch',
+  },
+  backButton:{
+    position:'absolute',
+    left:20,
+    top:50,
+  },
+  overlay:{
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.2)',
   },
   text:{
     fontSize:20,
@@ -97,12 +131,19 @@ const styles = StyleSheet.create({
   },
   addToTrip:{
     backgroundColor:'#DF6810',
-    padding:20,
+    padding:15,
     borderRadius:15,
   },
   addToTripText:{
     color:'white',
     fontWeight:'bold',
+  },
+  title:{
+    fontWeight:'bold',
+    fontSize:20,
+    paddingTop:10,
+    paddingLeft:10,
+    alignSelf:'flex-start',
   }
 
 })

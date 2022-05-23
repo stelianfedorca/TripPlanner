@@ -87,7 +87,7 @@ export default function AccountScreen({navigation}) {
         const photoUrl = user.photoURL;
         setPhotoUrl({url: photoUrl});        
       } else {
-          console.log("The user is not logged in");
+          return;
       }
   });
 

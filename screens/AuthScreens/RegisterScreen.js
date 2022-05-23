@@ -146,74 +146,32 @@ const RegisterScreen = ({navigation}) => {
     // download the url from storage
     return await getDownloadURL(fileRef);
     }
-    // const uploadPhoto = async (uri) => {
-    //     console.log("uploadPhoto is called..");
-    //     // const [loading, setLoading] = useState()
-    //     const blob = await new Promise((resolve, reject) => {
-    //         const xhr = new XMLHttpRequest();
-    //         xhr.onload = function () {
-    //             resolve(xhr.response);
-    //         };
-    //         xhr.onerror = function (e) {
-    //             alert(e);
-    //             reject(new TypeError("Network request failed"));
-    //         };
-    //         xhr.responseType = "blob";
-    //         xhr.open("GET", uri, true);
-    //         xhr.send(null);
-    //     });
-    //     const fileRef = ref(storage, `User/${email}`);
-    //     console.log('ffff')
-    //     const uploadTask = uploadBytesResumable(fileRef, blob);
-    //     uploadTask.on('state_changed', null,
-    //         (error) => {
-    //             alert(error);
-    //         },
-    //         () => {
-    //             getDownloadURL(uploadTask.snapshot.ref)
-    //             .then((URL) => {
-    //                 setDoc(doc(db, 'users', email.toLocaleLowerCase()), {name: name, postImage: URL});
-    //                 const auth = getAuth();
-    //                 const user = auth.currentUser;
-    //                 updateProfile(user, {displayName: name, photoURL: URL})
-    //                 .then(() => {
-    //                 console.log('registered')
-    //                 })
-                
-    //             });
-    //             blob.close();
-    //         }
-    //     )
-
-    // }
+   
 
     const handleSignUp = async () => {
         try{
             const { user } = await createUserWithEmailAndPassword(auth, emailInput, password)
-                    // Create the user document in firestore
-                    const uid = user.uid;
-                    const email = user.email;            
-                    const docRef = doc(db,'users', uid);
+            // Create the user document in firestore
+            const uid = user.uid;
+            const email = user.email;            
+            const docRef = doc(db,'users', uid);
                     
                     
-                    await updateProfile(user,{
-                       displayName: nameInput
-                    });
+            await updateProfile(user,{
+                displayName: nameInput
+            });
                     
-                    const data = {
-                        email: email,
-                        name: nameInput,
-                        image: image,
-                    }
-                    dispatch(setUid(uid));
-                    dispatch(setName(nameInput));
-                    dispatch(setEmail(emailInput));
+            const data = {
+                email: email,
+                name: nameInput,
+                image: image,
+            }
+            dispatch(setUid(uid));
+            dispatch(setName(nameInput));
+            dispatch(setEmail(emailInput));
                     
-                    setDoc(docRef,data);
+            setDoc(docRef,data);
 
-            // Add photo to the current user
-            // uploadUserPhoto(userPhoto.localUri);
-            // uploadImageToFirebase(image);
         }catch(err){
             console.log(err);
         }
@@ -226,7 +184,7 @@ const RegisterScreen = ({navigation}) => {
                 dispatch(setIsSignedIn(true));
                 // dispatch(setIsFirstSignIn(true));
             } else {
-                console.log("The user is not logged in");
+                return;
             }   
 
             return () => unsubscribe(); // unsubscribing from the listener when the component is unmounting.
@@ -245,73 +203,6 @@ const RegisterScreen = ({navigation}) => {
         navigation.replace('Login');
     }
 
-
-// GOOD TO USE : METHOD 2
-
-    // // Method 1. Add name to current user
-    //     await updateProfile(auth.currentUser,{
-    //         displayName : name,
-    //     })
-    //     .catch(error => console.log(error.message));
-    // Method 2. Add name to current user
-    // const currentUserEmail = auth.currentUser?.email;
-        // const docRef = doc(db,/* users = collection*/ 'users', currentUserEmail); // Reference to the document
-        // const data = {
-        //     name: name,
-        //     displayName: name, 
-        // }
-        // setDoc(docRef,data);
-
-    const displayUserDetails = async () => {
-        // USE METHOD 2
-
-        // Method 2. Get current user's name
-        // get the document reference associated with 'email' from 'users' collection 
-        const docRef = doc(db,'users',emailInput.toLocaleLowerCase());
-        const docSnapshot = await getDoc(docRef);
-
-        if(docSnapshot.exists()){
-            console.log("Name: ", docSnapshot.data());
-        }else{
-            console.log("No such document!");
-        }
-
-        // // Method 1. Get current user's name
-        // const currentUserName = auth.currentUser.displayName;
-        // console.log(currentUserName);
-    }
-
-    const chooseImage = async () => {
-        let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-        if(permissionResult.granted === false){
-            alert("Permision to access camera roll is required");
-            return ;
-        }
-
-        // if permission is granted
-        let pickerResult = await ImagePicker.launchImageLibraryAsync();
-
-        if(pickerResult === true){
-            return ;
-        }
-
-        // if the user has not cancelled
-        const imageUrl = await uploadImageToFirebase(pickerResult.uri);
-        
-        setUserPhoto({localUri: imageUrl});
-        // console.log(userPhoto.localUri);
-    }
-
-    const displayImage = () => {
-        setUserPhoto({localUri: auth.currentUser.photoURL});
-    }
-    const display = () => {
-        console.log("n: ",n);
-        console.log("e: ",e);
-    }
-
-    
   return (
     <KeyboardAvoidingView
     // keyboardVerticalOffset={headerHeight}
