@@ -15,7 +15,8 @@ import {
   DefaultTheme as PaperDefaultTheme, 
   Provider as PaperProvider
       } from 'react-native-paper'
-// const Stack = createNativeStackNavigator();
+
+      
 LogBox.ignoreLogs(['Setting a timer for a long period of time'])
 LogBox.ignoreLogs(['AsyncStorage has been extracted from react-native core and will be removed in a future release'])
 LogBox.ignoreLogs(['[Unhandled promise rejection: FirebaseError: ']);

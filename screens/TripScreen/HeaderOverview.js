@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, Text, View, Animated } from 'react-native'
 import React, { useEffect, useState } from 'react';
 import  Icon from 'react-native-vector-icons/FontAwesome';
 import { Ionicons } from '@expo/vector-icons';
@@ -43,6 +43,7 @@ export default HeaderCustom
 
 const styles = StyleSheet.create({
     container:{
+      
     },
     imageContainer:{
         height:230,

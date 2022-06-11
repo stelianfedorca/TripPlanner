@@ -1,5 +1,5 @@
 import { FlatList, StyleSheet, Text, View, Image, ActivityIndicator, SafeAreaView, Animated} from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, createContext} from 'react'
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { render } from 'react-dom';
@@ -21,11 +21,14 @@ import {PLACE_API_KEY} from '@env';
 const OverviewScreen = ({navigation}) => {
     const [loading, setLoading] = useState(true);
     const [imageSource, setImageSource] = useState('');
-    
     const [photoReference, setPhotoReference] = useState('');
-    
     // using the hook to access the redux store's state. ('place' in our case)
     const place = useSelector(selectPlace);
+
+    const scrollY = useRef(new Animated.Value(0));
+    const AnimateContext = createContext();
+
+
 
     const navigateToInfo = () => {
         navigation.navigate('Info',{
@@ -104,23 +107,25 @@ const OverviewScreen = ({navigation}) => {
     },[imageSource]);
 
     
-
+    const HEADER_EXPANDED_HEIGHT = 230
+    const HEADER_COLLAPSED_HEIGHT = 60
    
   return (
-    <SafeAreaView style={styles.container}>
-    {loading ? (
-        <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
-          <ActivityIndicator size="large" color="#000" />
-          </View>
-    ):( 
-        <Animated.View style={{flex:1}}>
+        <SafeAreaView style={styles.container}>
+        {loading ? (
+            <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+            <ActivityIndicator size="large" color="#000" />
+            </View>
+        ):( 
+            <>
             <HeaderOverview image={imageSource.url} />
             <TopBarOverview/>
-        </Animated.View>
+            </>
 
-    )}
+        )}
 
-    </SafeAreaView>
+        </SafeAreaView>
+
   )
 }
 

@@ -17,6 +17,8 @@ import OverviewScreen from './TripScreen/OverviewScreen';
 import PlaceDetailsScreen from './TripScreen/PlaceDetailsScreen';
 import { selectImageUrl } from '../redux/reducers/userReducer';
 import { Ionicons } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
+import MapScreen from './MapScreen';
 const StackScreen = () => {
     const Stack = createNativeStackNavigator();
     const isSignedIn = useSelector(selectIsSignedIn);
@@ -79,6 +81,16 @@ const StackScreen = () => {
             }
             )}
             />
+
+            {/* <Tab.Screen
+              name='Map'
+              component={MapScreen}
+              options={{
+                tabBarIcon: ({color}) => (
+                  <FontAwesome5 name="map-marked-alt" size={26} color={color} />
+                )
+              }}
+            /> */}
     
             <Tab.Screen 
             options={{

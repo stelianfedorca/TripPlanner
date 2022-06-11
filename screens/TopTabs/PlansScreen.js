@@ -10,9 +10,10 @@ import {v4 as uuidv4} from 'uuid';
 import { selectIsNewTripAdded, setIsNewTripAdded } from '../../redux/reducers/tripReducer';
 import { useDispatch } from 'react-redux';
 import { selectPlace, setPlaceId, setPlace } from '../../redux/reducers/placeReducer';
-import { ActivityIndicator, Colors } from 'react-native-paper';
+import { ActivityIndicator, Card, Colors, Subheading, Title } from 'react-native-paper';
 import EmptyListScreen from '../EmptyListScreen';
 import {PLACE_API_KEY} from '@env';
+import { Chip } from 'react-native-paper';
 
     // HOW TO FETCH PLANS' IMAGES
     // 1. get image name from every doc
@@ -58,25 +59,39 @@ const PlansScreen = ({navigation}) => {
 }
 
     const Item = ({item}) => {
-        const {title, image, place, imageReference, docId} = item;
-
+        const {title, image, place, imageReference, startDate, endDate ,id} = item;
         const url = useGetImage(imageReference);
 
         const displayOverviewScreen = async () => {
             dispatch(setPlace(place));
-            dispatch(setPlaceId(docId));
+            dispatch(setPlaceId(id));
             navigation.navigate('Overview');
         };
-        
         return (
+            
             <TouchableOpacity style={styles.item} onPress={displayOverviewScreen}>
                 <Image source={{uri: url}}
                 style={styles.image}
                  />
-                <Text 
-                style={{fontSize:17, marginStart:15,textAlignVertical:'center'}}>
-                {title}
-                </Text>
+                <View style={styles.details}>
+                    {/* <Title>{title}</Title> */}
+                    <Text style={{fontSize:17, fontWeight:'bold', marginBottom:3}}>{title}</Text>
+                    {
+                        startDate ? (
+                        <Chip icon="calendar" mode='outlined' style={{justifyContent:'space-between', flexDirection:'row', backgroundColor:'white'}} >
+                            <Text style={{fontWeight:'700'}}>{startDate.split(' ')[1] + " " + startDate.split(' ')[2]}</Text>
+                            <Text>{"     "}</Text>
+                            <Text style={{fontWeight:'700'}}>{endDate.split(' ')[1] + " " + endDate.split(' ')[2]}</Text>
+                        </Chip>
+                            ):(
+                        <>
+
+                        </>
+                        )
+                    }
+                    
+
+                </View>
             </TouchableOpacity>
         );
     }
@@ -94,16 +109,11 @@ const PlansScreen = ({navigation}) => {
             setIsQueryEmpty(true);
         }
         querySnapshot.forEach((doc) => {
-            tempArray.push(
-                {
-                    id: uuidv4(),
-                    title: doc.data().title,
-                    image: doc.data().image,
-                    place: doc.data().place,
-                    imageReference: doc.data().imageReference,
-                    docId: doc.id
-                }
-            );
+            const dataObject = {};
+            Object.assign(dataObject, doc.data());
+            dataObject.id = doc.id;
+            tempArray.push(dataObject);
+            
         });
         setTripPlans(tempArray);
     };
@@ -144,7 +154,7 @@ const PlansScreen = ({navigation}) => {
     { isLoading ? (
         <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
           <ActivityIndicator animating={true} color={Colors.blue200} size={24}/>
-          </View>
+        </View>
     ): (
       <FlatList
         data={tripPlans}
@@ -169,8 +179,9 @@ const styles = StyleSheet.create({
         // padding:20,
         backgroundColor:'white',
         
-        height:120,
+        height:100,
         flexDirection:'row',
+        justifyContent:'flex-start',
     },
     separator:{
         // backgroundColor:'red',
@@ -179,10 +190,16 @@ const styles = StyleSheet.create({
     },
     image:{
         width:100,
-        height:100,
+        height:'90%',
         margin:3,
         borderRadius:5,
         justifyContent:'center',
         alignSelf:'center'
+    },
+    details:{
+        justifyContent:'center',
+        marginStart:15,
+        textAlignVertical:'center',
+
     }
 })

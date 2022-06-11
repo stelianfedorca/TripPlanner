@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View,TouchableOpacity, FlatList, Image, ActivityIndicator, SafeAreaView} from 'react-native'
+import { StyleSheet, Text, View,TouchableOpacity, FlatList, Image, ActivityIndicator, SafeAreaView, Animated} from 'react-native'
 import React, { useEffect, useState, useRef } from 'react'
 import axios from 'axios';
 import { useSelector } from 'react-redux';
@@ -73,15 +73,16 @@ const RecommendScreen = ({navigation}) => {
     },[photoReference]);
 
 
-    const displayAttractionDetails = (title, photoUrl) => {
+    const displayAttractionDetails = (title, photoUrl, placeId) => {
         navigation.navigate('Info',{
             attractionSelected: title,
             photoUrl: photoUrl,
+            placeId: placeId,
         });
     }
 
 
-    const Item = ({title, photoReference, onClick}) => {
+    const Item = ({title, photoReference, onClick, placeId}) => {
             const [image, setImage] = useState('');
        
             const getPhoto = async () => {
@@ -112,7 +113,7 @@ const RecommendScreen = ({navigation}) => {
             
     
             return (
-                <TouchableOpacity style={styles.item} onPress={() => onClick(title,image.url)}>
+                <TouchableOpacity style={styles.item} onPress={() => onClick(title,image.url,placeId)}>
                     <Image source={{uri: image.url}} style={styles.imageItem}/>
                     <Text style={styles.itemTitle}>{title}</Text>
                 </TouchableOpacity>
@@ -120,14 +121,14 @@ const RecommendScreen = ({navigation}) => {
         };
     
     const renderItem = ({item}) => (
-        <Item title={item.title} photoReference={item.photoReference} onClick={displayAttractionDetails}/>
+        <Item title={item.title} photoReference={item.photoReference} onClick={displayAttractionDetails} placeId={item.place_id}/>
     )
 
         // get attractions based on the city
     const getDataFromPlace = async () => {
         var config = {
             method: 'get',
-            url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=attractions%20in%20${place}&key=${PLACE_API_KEY}`,
+            url: `https://maps.googleapis.com/maps/api/place/textsearch/json?query=point+of+interest+in+${place}&key=${PLACE_API_KEY}`,
             headers: { }
           };
           
@@ -141,6 +142,7 @@ const RecommendScreen = ({navigation}) => {
                                 id: uuidv4(),
                                 title: response.data.results[i].name,
                                 photoReference: response.data.results[i].photos[0].photo_reference,
+                                place_id: response.data.results[i].place_id,
                             }  
                           );
                   }
@@ -159,24 +161,33 @@ const RecommendScreen = ({navigation}) => {
         
     };
    
-        useEffect(() => {
-            if(attractions.length === 0) {
-                return ;
-            }
+    useEffect(() => {
+        if(attractions.length > 0) {
             setIsLoading(false);
-        },[attractions]);
+        }
+    },[attractions]);
 
-        useEffect(() => {
-            if(isInitialMount.current){
-                isInitialMount.current = false;
-                getDataFromPlace();
-            } else {
-                return;
-            }
-        },[]);
+    useEffect(() => {
+        if(isInitialMount.current){
+            isInitialMount.current = false;
+            getDataFromPlace();
+        } else {
+            return;
+        }
+    },[]);
+
+    // const handleScroll = Animated.event(
+    //     [
+    //         {
+    //             nativeEvent: {
+    //                 contentOffset: {y: }
+    //             }
+    //         }
+    //     ]
+    // )
 
 
-        return (
+    return (
     <SafeAreaView style={styles.container}>
     {
         isLoading ? (
@@ -184,12 +195,12 @@ const RecommendScreen = ({navigation}) => {
                 <ActivityIndicator size="small" color="#0000ff" />
           </View>
         ):(
-            <FlatList
+            <Animated.FlatList
                     data={attractions}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id}
                     numColumns={2}
-                />
+            />
         )
     }
     </SafeAreaView>

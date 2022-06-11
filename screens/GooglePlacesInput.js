@@ -37,6 +37,8 @@ const GooglePlacesInput = ({navigation}) => {
         title: `Trip to ${place}`,
         image: `${place}_image`,
         imageReference: `${photoReference}`,
+        startDate: startDate.toString(),
+        endDate: endDate.toString(),
       };
 
       // get the reference to subcollection
@@ -111,10 +113,15 @@ const GooglePlacesInput = ({navigation}) => {
 
     const onDateChange = (date, type) => {
       if(type === 'END_DATE'){
+        console.log(date);
         selectEndDate(date);
+        dispatch(setEndDate(date));
       } else {
+        console.log(date);
         selectStartDate(date);
         selectEndDate("");
+        dispatch(setStartDate(date));
+        dispatch(setEndDate(""));
       }
     }
 

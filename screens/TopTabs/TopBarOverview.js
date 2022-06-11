@@ -23,7 +23,7 @@ const TopBarOverview = () => {
             // }
         }}
          >
-            <Tab.Screen options={{headerShown:false}} name='Recommended' component={RecommendScreen}/>
+            <Tab.Screen options={{headerShown:false, }} name='Recommended' component={RecommendScreen}/>
             <Tab.Screen options={{headerShown:false}} name='Itinerary' component={ItineraryScreen}/>
             <Tab.Screen options={{headerShown:false}} name='Explore' component={ExploreScreen}/>
         </Tab.Navigator>
